@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --color-primary: #1B4D3E;       /* Vert foncé — confiance, éducation */
+    --color-primary-light: #2D7A5F;
+    --color-secondary: #F59E0B;     /* Orange/ambre — énergie, CTA */
+    --color-secondary-light: #FBBF24;
+    --color-accent: #3B82F6;        /* Bleu — liens, info */
+    --color-danger: #EF4444;
+    --color-success: #10B981;
+    --color-bg: #F9FAFB;
+    --color-surface: #FFFFFF;
+    --color-text: #1F2937;
+    --color-text-light: #6B7280;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+}
+
+/* Classes utilitaires basées sur les variables */
+.bg-primary { background-color: var(--color-primary); }
+.bg-primary-light { background-color: var(--color-primary-light); }
+.bg-secondary { background-color: var(--color-secondary); }
+.text-primary { color: var(--color-primary); }
+.text-secondary { color: var(--color-secondary); }
+.text-accent { color: var(--color-accent); }
+
+.btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold text-white transition-colors duration-200;
+    background-color: var(--color-primary);
+}
+.btn-primary:hover {
+    background-color: var(--color-primary-light);
+}
+
+.btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold text-white transition-colors duration-200;
+    background-color: var(--color-secondary);
+}
+.btn-secondary:hover {
+    background-color: var(--color-secondary-light);
+}

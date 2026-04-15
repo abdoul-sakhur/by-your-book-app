@@ -1,0 +1,5 @@
+admin ;(admin@buyyourbook.ci / password)
+clients : sarbaclient /password
+
+
+C:\Users\DELL\buyourbook\exigeance.txt
