@@ -4,7 +4,7 @@
     <section class="py-10">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <h1 class="text-2xl font-bold text-gray-900 mb-6">📦 Mes commandes</h1>
+            <h1 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2"><x-icon name="archive" class="w-6 h-6" /> Mes commandes</h1>
 
             @if(session('success'))
                 <div class="mb-4 rounded-lg bg-green-50 border border-green-200 p-4 text-green-800 text-sm">
@@ -27,7 +27,7 @@
                                         — {{ $order->items->count() }} article(s)
                                     </p>
                                     @if($order->relayPoint)
-                                        <p class="text-xs text-gray-400 mt-1">📍 {{ $order->relayPoint->name }}</p>
+                                        <p class="text-xs text-gray-400 mt-1 flex items-center gap-1"><x-icon name="drawing-pin" class="w-3 h-3" /> {{ $order->relayPoint->name }}</p>
                                     @endif
                                 </div>
                                 <div class="flex items-center gap-3">
@@ -48,7 +48,7 @@
                 </div>
             @else
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
-                    <p class="text-5xl mb-4">📦</p>
+                    <x-icon name="archive" class="w-12 h-12 text-gray-300 mx-auto mb-4" />
                     <h2 class="text-xl font-semibold text-gray-700">Aucune commande</h2>
                     <p class="text-gray-400 mt-2">Vous n'avez pas encore passé de commande.</p>
                     <a href="{{ route('catalog.schools') }}" class="btn-primary mt-6 inline-block !py-3 !px-8">

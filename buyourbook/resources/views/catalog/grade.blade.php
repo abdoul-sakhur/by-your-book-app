@@ -46,9 +46,7 @@
                                          class="w-16 h-20 object-cover rounded-lg">
                                 @else
                                     <div class="w-16 h-20 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
-                                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                                        </svg>
+                                        <x-icon name="reader" class="w-8 h-8" />
                                     </div>
                                 @endif
                             </div>
@@ -72,10 +70,22 @@
                                         à partir de {{ number_format($book->seller_books_min_price, 0, ',', ' ') }} F
                                     </p>
                                     <p class="text-xs text-gray-500 mt-1">{{ $book->seller_books_count }} offre(s)</p>
-                                    <a href="{{ route('catalog.book', $book) }}"
-                                       class="mt-2 inline-flex btn-primary !py-2 !px-4 text-sm">
-                                        Voir les offres
-                                    </a>
+                                    <div class="mt-2 flex items-center gap-2 justify-end">
+                                        @if($book->cheapest_seller_book_id)
+                                            <form action="{{ route('cart.add') }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="seller_book_id" value="{{ $book->cheapest_seller_book_id }}">
+                                                <input type="hidden" name="quantity" value="1">
+                                                <button type="submit" class="inline-flex items-center btn-primary !py-2 !px-4 text-sm gap-1">
+                                                    <x-icon name="backpack" class="w-4 h-4" /> Acheter
+                                                </button>
+                                            </form>
+                                        @endif
+                                        <a href="{{ route('catalog.book', $book) }}"
+                                           class="inline-flex btn-secondary !py-2 !px-4 text-sm">
+                                            Voir les offres
+                                        </a>
+                                    </div>
                                 @else
                                     <p class="text-sm text-gray-400">Aucune offre</p>
                                     <p class="text-xs text-gray-300 mt-1">actuellement disponible</p>

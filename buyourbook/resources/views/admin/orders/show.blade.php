@@ -12,7 +12,7 @@
             <p class="font-semibold text-gray-900 mt-1">{{ $order->user->name }}</p>
             <p class="text-sm text-gray-500">{{ $order->user->email }}</p>
             @if($order->user->phone)
-                <p class="text-sm text-gray-500">📞 {{ $order->user->phone }}</p>
+                <p class="text-sm text-gray-500 flex items-center gap-1"><x-icon name="mobile" class="w-4 h-4" /> {{ $order->user->phone }}</p>
             @endif
         </div>
         <div class="bg-white rounded-lg shadow p-5">
@@ -26,7 +26,7 @@
                 <p class="font-semibold text-gray-900 mt-1">{{ $order->relayPoint->name }}</p>
                 <p class="text-xs text-gray-400">{{ $order->relayPoint->address }}, {{ $order->relayPoint->district }}</p>
                 @if($order->relayPoint->contact_phone)
-                    <p class="text-xs text-gray-400">📞 {{ $order->relayPoint->contact_phone }}</p>
+                    <p class="text-xs text-gray-400 flex items-center gap-1"><x-icon name="mobile" class="w-3 h-3" /> {{ $order->relayPoint->contact_phone }}</p>
                 @endif
             @else
                 <p class="text-gray-400 mt-1 text-sm">Non spécifié</p>

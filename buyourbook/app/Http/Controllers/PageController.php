@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ContactRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
@@ -18,14 +19,9 @@ class PageController extends Controller
         return view('pages.contact');
     }
 
-    public function contactSend(Request $request)
+    public function contactSend(ContactRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'subject' => 'required|string|max:255',
-            'message' => 'required|string|max:2000',
-        ]);
+        $validated = $request->validated();
 
         // Envoi d'un mail à l'admin via notification simple
         Mail::raw(

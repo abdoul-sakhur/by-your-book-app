@@ -37,13 +37,13 @@
                     {{ old('role', 'buyer') === 'buyer' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-gray-300' }}"
                     onclick="this.parentElement.querySelectorAll('label').forEach(l => { l.classList.remove('border-green-500','bg-green-50'); l.classList.add('border-gray-200'); }); this.classList.remove('border-gray-200'); this.classList.add('border-green-500','bg-green-50');">
                     <input type="radio" name="role" value="buyer" {{ old('role', 'buyer') === 'buyer' ? 'checked' : '' }} class="sr-only">
-                    <span class="text-sm font-medium text-gray-700">🛒 Acheter</span>
+                    <span class="text-sm font-medium text-gray-700"><x-icon name="backpack" class="w-4 h-4 inline" /> Acheter</span>
                 </label>
                 <label class="relative flex items-center justify-center px-4 py-3 rounded-lg border-2 cursor-pointer transition
                     {{ old('role') === 'seller' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-gray-300' }}"
                     onclick="this.parentElement.querySelectorAll('label').forEach(l => { l.classList.remove('border-green-500','bg-green-50'); l.classList.add('border-gray-200'); }); this.classList.remove('border-gray-200'); this.classList.add('border-green-500','bg-green-50');">
                     <input type="radio" name="role" value="seller" {{ old('role') === 'seller' ? 'checked' : '' }} class="sr-only">
-                    <span class="text-sm font-medium text-gray-700">💰 Vendre</span>
+                    <span class="text-sm font-medium text-gray-700"><x-icon name="tokens" class="w-4 h-4 inline" /> Vendre</span>
                 </label>
             </div>
             @error('role') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\SchoolRequest;
 use App\Models\School;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,14 +31,9 @@ class SchoolController extends Controller
         return view('admin.schools.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(SchoolRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'city' => ['required', 'string', 'max:255'],
-            'district' => ['required', 'string', 'max:255'],
-            'is_active' => ['boolean'],
-        ]);
+        $validated = $request->validated();
 
         $validated['is_active'] = $request->boolean('is_active');
 
@@ -56,14 +52,9 @@ class SchoolController extends Controller
         return view('admin.schools.edit', compact('school'));
     }
 
-    public function update(Request $request, School $school): RedirectResponse
+    public function update(SchoolRequest $request, School $school): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'city' => ['required', 'string', 'max:255'],
-            'district' => ['required', 'string', 'max:255'],
-            'is_active' => ['boolean'],
-        ]);
+        $validated = $request->validated();
 
         $validated['is_active'] = $request->boolean('is_active');
 

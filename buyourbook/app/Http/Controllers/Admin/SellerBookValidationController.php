@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\BookStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\RejectSellerBookRequest;
 use App\Models\SellerBook;
 use App\Notifications\SellerBookStatusNotification;
 use Illuminate\Http\RedirectResponse;
@@ -51,12 +52,9 @@ class SellerBookValidationController extends Controller
             ->with('success', "Livre de « {$sellerBook->seller->name} » approuvé.");
     }
 
-    public function reject(Request $request, SellerBook $sellerBook): RedirectResponse
+    public function reject(RejectSellerBookRequest $request, SellerBook $sellerBook): RedirectResponse
     {
-        $validated = $request->validate([
-            'rejection_reason' => ['required', 'string', 'max:500'],
-            'admin_notes' => ['nullable', 'string', 'max:1000'],
-        ]);
+        $validated = $request->validated();
 
         $sellerBook->update([
             'status' => BookStatus::Rejected,

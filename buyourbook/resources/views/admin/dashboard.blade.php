@@ -39,13 +39,13 @@
 
         <!-- Graphique CA 6 mois -->
         <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4">📊 Chiffre d'affaires (6 derniers mois)</h2>
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><x-icon name="bar-chart" class="w-5 h-5" /> Chiffre d'affaires (6 derniers mois)</h2>
             <canvas id="revenueChart" height="200"></canvas>
         </div>
 
         <!-- Graphique Commandes par statut -->
         <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4">📦 Commandes par statut</h2>
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><x-icon name="archive" class="w-5 h-5" /> Commandes par statut</h2>
             <canvas id="ordersChart" height="200"></canvas>
         </div>
 
@@ -103,7 +103,7 @@
     <!-- Top vendeurs -->
     <div class="mt-8 bg-white rounded-lg shadow">
         <div class="px-6 py-4 border-b">
-            <h2 class="text-lg font-semibold text-gray-800">🏆 Top vendeurs</h2>
+            <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2"><x-icon name="star-filled" class="w-5 h-5 text-yellow-500" /> Top vendeurs</h2>
         </div>
         <div class="divide-y">
             @forelse ($topSellers as $index => $seller)

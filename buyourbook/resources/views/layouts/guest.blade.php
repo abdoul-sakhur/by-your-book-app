@@ -17,8 +17,8 @@
     <body class="font-sans text-gray-900 antialiased" style="background-color: var(--color-bg);">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
             <div>
-                <a href="{{ route('home') }}" class="text-2xl font-bold" style="color: var(--color-primary);">
-                    📚 BuyYourBook
+                <a href="{{ route('home') }}" class="text-2xl font-bold flex items-center gap-1" style="color: var(--color-primary);">
+                    <x-icon name="reader" class="w-6 h-6" /> BuyYourBook
                 </a>
             </div>
 

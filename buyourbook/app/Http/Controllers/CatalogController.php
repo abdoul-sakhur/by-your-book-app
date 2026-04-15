@@ -83,6 +83,13 @@ class CatalogController extends Controller
             ->with(['subject'])
             ->withCount(['sellerBooks' => fn ($q) => $q->approved()->where('quantity', '>', 0)])
             ->withMin(['sellerBooks' => fn ($q) => $q->approved()->where('quantity', '>', 0)], 'price')
+            ->addSelect(['cheapest_seller_book_id' => SellerBook::select('id')
+                ->whereColumn('official_book_id', 'official_books.id')
+                ->approved()
+                ->where('quantity', '>', 0)
+                ->orderBy('price')
+                ->limit(1)
+            ])
             ->get();
 
         $school->load('grades');

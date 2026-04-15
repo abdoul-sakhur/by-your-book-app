@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\OfficialBookRequest;
 use App\Models\Grade;
 use App\Models\OfficialBook;
 use App\Models\School;
@@ -43,18 +44,9 @@ class OfficialBookController extends Controller
         return view('admin.official-books.create', compact('schools', 'subjects', 'selectedGrade'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(OfficialBookRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'grade_id' => ['required', 'exists:grades,id'],
-            'subject_id' => ['required', 'exists:subjects,id'],
-            'title' => ['required', 'string', 'max:255'],
-            'author' => ['nullable', 'string', 'max:255'],
-            'isbn' => ['nullable', 'string', 'max:30'],
-            'publisher' => ['nullable', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:1000'],
-            'is_active' => ['boolean'],
-        ]);
+        $validated = $request->validated();
 
         $validated['is_active'] = $request->boolean('is_active');
 
@@ -76,18 +68,9 @@ class OfficialBookController extends Controller
         return view('admin.official-books.edit', compact('officialBook', 'schools', 'subjects'));
     }
 
-    public function update(Request $request, OfficialBook $officialBook): RedirectResponse
+    public function update(OfficialBookRequest $request, OfficialBook $officialBook): RedirectResponse
     {
-        $validated = $request->validate([
-            'grade_id' => ['required', 'exists:grades,id'],
-            'subject_id' => ['required', 'exists:subjects,id'],
-            'title' => ['required', 'string', 'max:255'],
-            'author' => ['nullable', 'string', 'max:255'],
-            'isbn' => ['nullable', 'string', 'max:30'],
-            'publisher' => ['nullable', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:1000'],
-            'is_active' => ['boolean'],
-        ]);
+        $validated = $request->validated();
 
         $validated['is_active'] = $request->boolean('is_active');
 

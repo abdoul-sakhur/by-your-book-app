@@ -16,12 +16,12 @@
                     <a href="{{ route('catalog.schools') }}"
                        class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-lg text-white shadow-lg hover:shadow-xl transition"
                        style="background-color: var(--color-secondary);">
-                        📖 Acheter mes livres
+                        <x-icon name="reader" class="w-5 h-5 inline" /> Acheter mes livres
                     </a>
                     <a href="{{ route('register') }}"
                        class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-lg bg-white shadow-lg hover:shadow-xl transition"
                        style="color: var(--color-primary);">
-                        💰 Vendre mes livres
+                        <x-icon name="tokens" class="w-5 h-5 inline" /> Vendre mes livres
                     </a>
                 </div>
             </div>
@@ -97,7 +97,7 @@
 
             <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
                 @forelse($schools as $school)
-                    <a href="{{ route('catalog.schools') }}"
+                    <a href="{{ $school->grades->first() ? route('catalog.grade', [$school, $school->grades->first()]) : route('catalog.schools') }}"
                        class="border border-gray-200 rounded-lg p-5 text-center hover:shadow-md hover:border-[var(--color-primary)] transition group">
                         @if($school->logo)
                             <img src="{{ Storage::url($school->logo) }}" alt="{{ $school->name }}" class="w-12 h-12 mx-auto rounded-full object-cover mb-3">

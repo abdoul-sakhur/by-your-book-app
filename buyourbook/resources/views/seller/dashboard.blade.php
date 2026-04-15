@@ -55,9 +55,7 @@
                 <a href="{{ route('seller.books.create') }}"
                    class="flex items-center gap-4 bg-white rounded-lg shadow-sm p-5 hover:bg-gray-50 transition">
                     <div class="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style="background-color: var(--color-primary);">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
+                        <x-icon name="plus" class="w-6 h-6 text-white" />
                     </div>
                     <div>
                         <p class="font-semibold text-gray-900">Soumettre un livre</p>
@@ -68,9 +66,7 @@
                 <a href="{{ route('seller.books.index') }}"
                    class="flex items-center gap-4 bg-white rounded-lg shadow-sm p-5 hover:bg-gray-50 transition">
                     <div class="flex-shrink-0 w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
-                        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                        </svg>
+                        <x-icon name="clipboard" class="w-6 h-6 text-indigo-600" />
                     </div>
                     <div>
                         <p class="font-semibold text-gray-900">Mes livres</p>
@@ -81,9 +77,18 @@
                 <a href="{{ route('seller.orders.index') }}"
                    class="flex items-center gap-4 bg-white rounded-lg shadow-sm p-5 hover:bg-gray-50 transition">
                     <div class="flex-shrink-0 w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
-                        <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                        </svg>
+                        <x-icon name="archive" class="w-6 h-6 text-amber-600" />
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-900">Mes ventes</p>
+                        <p class="text-sm text-gray-500">Suivre les commandes de vos livres</p>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</x-app-layout>
                     </div>
                     <div>
                         <p class="font-semibold text-gray-900">Mes ventes</p>

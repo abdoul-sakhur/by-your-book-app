@@ -49,6 +49,23 @@
                 </div>
             @endif
 
+            @if($errors->any() && !request()->routeIs('checkout.*'))
+                <div x-data="{ show: true }" x-show="show" x-transition.opacity.duration.500ms
+                     class="max-w-7xl mx-auto mt-4 px-4 sm:px-6 lg:px-8">
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded flex justify-between items-center">
+                        <div>
+                            <p class="font-medium">Une erreur est survenue :</p>
+                            <ul class="list-disc list-inside text-sm mt-1">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        <button @click="show = false" class="text-red-700 hover:text-red-900">&times;</button>
+                    </div>
+                </div>
+            @endif
+
             <!-- Page Content -->
             <main class="flex-1">
                 {{ $slot }}

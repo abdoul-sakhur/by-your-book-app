@@ -6,6 +6,21 @@
 
             <h1 class="text-2xl font-bold text-gray-900 mb-6">Valider ma commande</h1>
 
+            {{-- Erreurs de validation --}}
+            @if($errors->any())
+                <div class="mb-6 rounded-lg bg-red-50 border border-red-200 p-4">
+                    <div class="flex items-center gap-2 text-red-800 font-medium text-sm mb-1">
+                        <x-icon name="cross-circled" class="w-5 h-5" />
+                        Veuillez corriger les erreurs suivantes :
+                    </div>
+                    <ul class="list-disc list-inside text-sm text-red-700">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             {{-- Récapitulatif articles --}}
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
                 <h2 class="text-lg font-semibold text-gray-800 mb-4">Récapitulatif ({{ count($items) }} article(s))</h2>
@@ -40,7 +55,7 @@
 
                 {{-- Point relais --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-4">📍 Point de retrait</h2>
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><x-icon name="drawing-pin" class="w-5 h-5" /> Point de retrait</h2>
 
                     @if($relayPoints->count() > 0)
                         {{-- Filtre par ville --}}
@@ -67,10 +82,10 @@
                                         <p class="font-medium text-gray-900 text-sm">{{ $rp->name }}</p>
                                         <p class="text-xs text-gray-500">{{ $rp->address }}, {{ $rp->district }} — {{ $rp->city }}</p>
                                         @if($rp->schedule)
-                                            <p class="text-xs text-gray-400 mt-1">🕐 {{ $rp->schedule }}</p>
+                                            <p class="text-xs text-gray-400 mt-1"><x-icon name="clock" class="w-3 h-3 inline" /> {{ $rp->schedule }}</p>
                                         @endif
                                         @if($rp->contact_phone)
-                                            <p class="text-xs text-gray-400">📞 {{ $rp->contact_phone }}</p>
+                                            <p class="text-xs text-gray-400"><x-icon name="mobile" class="w-3 h-3 inline" /> {{ $rp->contact_phone }}</p>
                                         @endif
                                     </div>
                                 </label>
@@ -79,6 +94,10 @@
                     @else
                         <p class="text-gray-400 text-sm">Aucun point relais disponible pour le moment.</p>
                     @endif
+
+                    @error('relay_point_id')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- Notes --}}
@@ -94,8 +113,8 @@
                     <a href="{{ route('cart.index') }}" class="text-center py-3 px-6 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition">
                         Retour au panier
                     </a>
-                    <button type="submit" class="btn-primary flex-1 !py-3 text-center">
-                        ✅ Confirmer la commande — {{ number_format($total, 0, ',', ' ') }} F CFA
+                    <button type="submit" class="btn-primary flex-1 !py-3 text-center flex items-center justify-center gap-2">
+                        <x-icon name="check-circled" class="w-5 h-5" /> Confirmer la commande — {{ number_format($total, 0, ',', ' ') }} F CFA
                     </button>
                 </div>
             </form>

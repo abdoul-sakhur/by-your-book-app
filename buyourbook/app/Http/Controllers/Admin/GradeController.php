@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\GradeRequest;
 use App\Models\Grade;
 use App\Models\School;
 use Illuminate\Http\RedirectResponse;
@@ -38,14 +39,9 @@ class GradeController extends Controller
         return view('admin.grades.create', compact('schools', 'selectedSchool'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(GradeRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'school_id' => ['required', 'exists:schools,id'],
-            'name' => ['required', 'string', 'max:255'],
-            'level' => ['required', 'string', 'max:100'],
-            'academic_year' => ['required', 'string', 'max:20'],
-        ]);
+        $validated = $request->validated();
 
         Grade::create($validated);
 
@@ -60,14 +56,9 @@ class GradeController extends Controller
         return view('admin.grades.edit', compact('grade', 'schools'));
     }
 
-    public function update(Request $request, Grade $grade): RedirectResponse
+    public function update(GradeRequest $request, Grade $grade): RedirectResponse
     {
-        $validated = $request->validate([
-            'school_id' => ['required', 'exists:schools,id'],
-            'name' => ['required', 'string', 'max:255'],
-            'level' => ['required', 'string', 'max:100'],
-            'academic_year' => ['required', 'string', 'max:20'],
-        ]);
+        $validated = $request->validated();
 
         $grade->update($validated);
 

@@ -23,9 +23,7 @@
                              class="w-32 h-40 object-cover rounded-lg flex-shrink-0">
                     @else
                         <div class="w-32 h-40 bg-gray-100 rounded-lg flex items-center justify-center text-gray-300 flex-shrink-0">
-                            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                            </svg>
+                            <x-icon name="reader" class="w-12 h-12" />
                         </div>
                     @endif
                     <div>
@@ -38,8 +36,9 @@
                                             :disabled="loading"
                                             class="p-1.5 rounded-full hover:bg-red-50 transition"
                                             :title="wishlisted ? 'Retirer des favoris' : 'Ajouter aux favoris'">
-                                        <svg class="w-6 h-6 transition" :class="wishlisted ? 'text-red-500' : 'text-gray-300 hover:text-red-400'" :fill="wishlisted ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                        <svg class="w-6 h-6 transition" :class="wishlisted ? 'text-red-500' : 'text-gray-300 hover:text-red-400'" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path x-show="!wishlisted" d="M4.89346 2.35248C3.49195 2.35248 2.35248 3.49359 2.35248 4.90532C2.35248 6.38164 3.20954 7.9168 4.37255 9.33522C5.39396 10.581 6.59464 11.6702 7.50002 12.4778C8.4054 11.6702 9.60608 10.581 10.6275 9.33522C11.7905 7.9168 12.6476 6.38164 12.6476 4.90532C12.6476 3.49359 11.5081 2.35248 10.1066 2.35248C9.27059 2.35248 8.81894 2.64323 8.5397 2.95843C8.27877 3.25295 8.14623 3.58566 8.02501 3.88993C8.00391 3.9429 7.98315 3.99501 7.96211 4.04591C7.88482 4.23294 7.7024 4.35494 7.50002 4.35494C7.29765 4.35494 7.11523 4.23295 7.03793 4.04592C7.01689 3.99501 6.99612 3.94289 6.97502 3.8899C6.8538 3.58564 6.72126 3.25294 6.46034 2.95843C6.18109 2.64323 5.72945 2.35248 4.89346 2.35248ZM1.35248 4.90532C1.35248 2.94498 2.936 1.35248 4.89346 1.35248C6.0084 1.35248 6.73504 1.76049 7.20884 2.2953C7.32062 2.42147 7.41686 2.55382 7.50002 2.68545C7.58318 2.55382 7.67941 2.42147 7.79119 2.2953C8.265 1.76049 8.99164 1.35248 10.1066 1.35248C12.064 1.35248 13.6476 2.94498 13.6476 4.90532C13.6476 6.74041 12.6013 8.50508 11.4008 9.96927C10.2636 11.3562 8.92194 12.5508 8.00601 13.3664C7.94645 13.4194 7.88869 13.4709 7.83291 13.5206C7.64324 13.6899 7.3568 13.6899 7.16713 13.5206C7.11135 13.4709 7.05359 13.4194 6.99403 13.3664C6.0781 12.5508 4.73641 11.3562 3.59926 9.96927C2.39872 8.50508 1.35248 6.74041 1.35248 4.90532Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/>
+                                            <path x-show="wishlisted" d="M1.35248 4.90532C1.35248 2.94498 2.936 1.35248 4.89346 1.35248C6.25769 1.35248 6.86058 1.92336 7.50002 2.93545C8.13946 1.92336 8.74235 1.35248 10.1066 1.35248C12.064 1.35248 13.6476 2.94498 13.6476 4.90532C13.6476 6.74041 12.6013 8.50508 11.4008 9.96927C10.2636 11.3562 8.92194 12.5508 8.00601 13.3664C7.94645 13.4194 7.88869 13.4709 7.83291 13.5206C7.64324 13.6899 7.3568 13.6899 7.16713 13.5206C7.11135 13.4709 7.05359 13.4194 6.99403 13.3664C6.0781 12.5508 4.73641 11.3562 3.59926 9.96927C2.39872 8.50508 1.35248 6.74041 1.35248 4.90532Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/>
                                         </svg>
                                     </button>
                                 </div>
@@ -55,8 +54,8 @@
                         @if($officialBook->isbn)
                             <p class="text-xs text-gray-400 mt-1">ISBN : {{ $officialBook->isbn }}</p>
                         @endif
-                        <p class="text-sm text-gray-500 mt-2">
-                            📍 {{ $officialBook->grade->school->name }} — {{ $officialBook->grade->name }}
+                        <p class="text-sm text-gray-500 mt-2 flex items-center gap-1">
+                            <x-icon name="drawing-pin" class="w-4 h-4" /> {{ $officialBook->grade->school->name }} — {{ $officialBook->grade->name }}
                         </p>
                         @if($officialBook->description)
                             <p class="text-sm text-gray-600 mt-3">{{ $officialBook->description }}</p>
@@ -83,7 +82,7 @@
                                     @endforeach
                                 @else
                                     <div class="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center text-gray-300">
-                                        📷
+                                        <x-icon name="camera" class="w-6 h-6" />
                                     </div>
                                 @endif
                             </div>
@@ -108,8 +107,8 @@
                                     @csrf
                                     <input type="hidden" name="seller_book_id" value="{{ $offer->id }}">
                                     <input type="hidden" name="quantity" value="1">
-                                    <button type="submit" class="btn-secondary !py-2 !px-4 text-sm">
-                                        🛒 Ajouter
+                                    <button type="submit" class="btn-secondary !py-2 !px-4 text-sm flex items-center gap-1">
+                                        <x-icon name="backpack" class="w-4 h-4" /> Ajouter
                                     </button>
                                 </form>
                             </div>

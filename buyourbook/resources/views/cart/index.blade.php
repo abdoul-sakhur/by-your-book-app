@@ -4,11 +4,17 @@
     <section class="py-10">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <h1 class="text-2xl font-bold text-gray-900 mb-6">🛒 Mon panier</h1>
+            <h1 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2"><x-icon name="backpack" class="w-6 h-6" /> Mon panier</h1>
 
             @if(session('success'))
                 <div class="mb-4 rounded-lg bg-green-50 border border-green-200 p-4 text-green-800 text-sm">
                     {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="mb-4 rounded-lg bg-red-50 border border-red-200 p-4 text-red-800 text-sm">
+                    {{ session('error') }}
                 </div>
             @endif
 
@@ -22,7 +28,7 @@
                                 @if($book->images && count($book->images) > 0)
                                     <img src="{{ Storage::url($book->images[0]) }}" alt="Photo" class="w-16 h-16 object-cover rounded-lg border">
                                 @else
-                                    <div class="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center text-gray-300">📷</div>
+                                    <div class="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center text-gray-300"><x-icon name="camera" class="w-6 h-6" /></div>
                                 @endif
                             </div>
 
@@ -67,9 +73,7 @@
                                 @csrf
                                 <input type="hidden" name="seller_book_id" value="{{ $book->id }}">
                                 <button type="submit" class="text-red-400 hover:text-red-600 p-1" title="Retirer">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                    </svg>
+                                    <x-icon name="trash" class="w-5 h-5" />
                                 </button>
                             </form>
                         </div>
@@ -96,7 +100,7 @@
                 </div>
             @else
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
-                    <p class="text-5xl mb-4">🛒</p>
+                    <div class="text-5xl mb-4"><x-icon name="backpack" class="w-12 h-12 mx-auto text-gray-300" /></div>
                     <h2 class="text-xl font-semibold text-gray-700">Votre panier est vide</h2>
                     <p class="text-gray-400 mt-2">Parcourez le catalogue pour trouver vos livres scolaires.</p>
                     <a href="{{ route('catalog.schools') }}" class="btn-primary mt-6 inline-block !py-3 !px-8">

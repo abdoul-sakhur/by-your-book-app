@@ -47,7 +47,7 @@
                                     <img src="{{ Storage::url($book->images[0]) }}" alt="Photo"
                                          class="w-16 h-20 object-cover rounded-lg border">
                                 @else
-                                    <div class="w-16 h-20 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">📚</div>
+                                    <div class="w-16 h-20 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400"><x-icon name="reader" class="w-8 h-8" /></div>
                                 @endif
                             </div>
                             <div class="flex-1 min-w-0">
@@ -74,7 +74,7 @@
                                     <input type="hidden" name="seller_book_id" value="{{ $book->id }}">
                                     <input type="hidden" name="quantity" value="1">
                                     <button type="submit" class="btn-secondary !py-2 !px-4 text-sm">
-                                        🛒 Ajouter
+                                        <x-icon name="backpack" class="w-4 h-4 inline" /> Ajouter
                                     </button>
                                 </form>
                             </div>

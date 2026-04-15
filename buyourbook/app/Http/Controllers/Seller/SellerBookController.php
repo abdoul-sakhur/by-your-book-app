@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Seller;
 use App\Enums\BookCondition;
 use App\Enums\BookStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Seller\SellerBookRequest;
 use App\Models\Grade;
 use App\Models\OfficialBook;
 use App\Models\School;
@@ -37,15 +38,9 @@ class SellerBookController extends Controller
         return view('seller.books.create', compact('schools', 'conditions'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(SellerBookRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'official_book_id' => ['required', 'exists:official_books,id'],
-            'condition' => ['required', 'string', 'in:new,good,acceptable'],
-            'price' => ['required', 'integer', 'min:500', 'max:100000'],
-            'quantity' => ['required', 'integer', 'min:1', 'max:20'],
-            'images.*' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-        ]);
+        $validated = $request->validated();
 
         $images = [];
         if ($request->hasFile('images')) {
@@ -83,18 +78,12 @@ class SellerBookController extends Controller
         return view('seller.books.edit', compact('book', 'schools', 'conditions'));
     }
 
-    public function update(Request $request, SellerBook $book): RedirectResponse
+    public function update(SellerBookRequest $request, SellerBook $book): RedirectResponse
     {
         abort_unless($book->user_id === auth()->id(), 403);
         abort_unless(in_array($book->status, [BookStatus::Pending, BookStatus::Rejected]), 403);
 
-        $validated = $request->validate([
-            'official_book_id' => ['required', 'exists:official_books,id'],
-            'condition' => ['required', 'string', 'in:new,good,acceptable'],
-            'price' => ['required', 'integer', 'min:500', 'max:100000'],
-            'quantity' => ['required', 'integer', 'min:1', 'max:20'],
-            'images.*' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-        ]);
+        $validated = $request->validated();
 
         $images = $book->images ?? [];
         if ($request->hasFile('images')) {

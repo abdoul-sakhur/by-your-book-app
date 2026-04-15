@@ -18,6 +18,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SellerProfileController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\Seller\DashboardController as SellerDashboardController;
 use App\Http\Controllers\Seller\SellerBookController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Seller\OrderController as SellerOrderController;
@@ -32,7 +33,7 @@ use Illuminate\Support\Facades\Route;
 
 // --- Page d'accueil ---
 Route::get('/', function () {
-    $schools = School::active()->withCount('grades')->orderBy('name')->limit(8)->get();
+    $schools = School::active()->withCount('grades')->with(['grades' => fn($q) => $q->orderBy('level')->limit(1)])->orderBy('name')->limit(8)->get();
     return view('home', compact('schools'));
 })->name('home');
 
@@ -179,21 +180,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 // --- Espace Vendeur ---
 Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->group(function () {
     // Dashboard
-    Route::get('/', function () {
-        $userId = auth()->id();
-        $totalSales = \App\Models\OrderItem::whereHas('sellerBook', fn ($q) => $q->where('seller_id', $userId))->sum(\Illuminate\Support\Facades\DB::raw('quantity * unit_price'));
-        $totalItemsSold = \App\Models\OrderItem::whereHas('sellerBook', fn ($q) => $q->where('seller_id', $userId))->sum('quantity');
-        $totalOrders = \App\Models\Order::whereHas('items.sellerBook', fn ($q) => $q->where('seller_id', $userId))->count();
-        return view('seller.dashboard', [
-            'totalBooks' => SellerBook::forSeller($userId)->count(),
-            'pendingBooks' => SellerBook::forSeller($userId)->pending()->count(),
-            'approvedBooks' => SellerBook::forSeller($userId)->approved()->count(),
-            'rejectedBooks' => SellerBook::forSeller($userId)->where('status', BookStatus::Rejected)->count(),
-            'totalSales' => $totalSales,
-            'totalItemsSold' => $totalItemsSold,
-            'totalOrders' => $totalOrders,
-        ]);
-    })->name('dashboard');
+    Route::get('/', SellerDashboardController::class)->name('dashboard');
 
     // CRUD Livres vendeur
     Route::resource('books', SellerBookController::class)->except('show');

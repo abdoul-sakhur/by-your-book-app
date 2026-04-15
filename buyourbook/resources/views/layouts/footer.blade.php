@@ -3,7 +3,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Marque -->
             <div>
-                <h3 class="text-lg font-bold" style="color: var(--color-primary);">📚 BuyYourBook</h3>
+                <h3 class="text-lg font-bold flex items-center gap-1" style="color: var(--color-primary);"><x-icon name="reader" class="w-5 h-5" /> BuyYourBook</h3>
                 <p class="mt-2 text-sm text-gray-500">
                     La plateforme d'achat et vente de livres scolaires en Côte d'Ivoire.
                     Trouvez les manuels de votre école au meilleur prix.
@@ -33,7 +33,7 @@
 
         <div class="mt-8 pt-6 border-t border-gray-200 text-center">
             <p class="text-sm text-gray-400">
-                &copy; {{ date('Y') }} BuyYourBook.com — Tous droits réservés. Fait avec ❤️ à Abidjan.
+                &copy; {{ date('Y') }} BuyYourBook.com — Tous droits réservés. Fait avec <x-icon name="heart-filled" class="w-4 h-4 inline text-red-500" /> à Abidjan.
             </p>
         </div>
     </div>

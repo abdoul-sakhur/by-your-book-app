@@ -12,7 +12,7 @@
                 </div>
                 <div class="flex items-center gap-3">
                     <a href="{{ route('orders.invoice', $order) }}" class="btn-secondary !py-2 !px-4 text-sm inline-flex items-center gap-1">
-                        📄 Télécharger la facture
+                        <x-icon name="file-text" class="w-4 h-4" /> Télécharger la facture
                     </a>
                     <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-{{ $order->status->color() }}-100 text-{{ $order->status->color() }}-800">
                         {{ $order->status->label() }}
@@ -89,7 +89,7 @@
             @if($order->events && $order->events->count() > 0)
                 <div class="mt-8 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100">
-                        <h2 class="text-lg font-semibold text-gray-800">📋 Historique de la commande</h2>
+                        <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2"><x-icon name="clipboard" class="w-5 h-5" /> Historique de la commande</h2>
                     </div>
                     <div class="px-6 py-4">
                         <div class="relative">

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\OrderStatus;
+use App\Http\Requests\CheckoutRequest;
 use App\Models\Order;
 use App\Models\RelayPoint;
 use App\Models\OrderEvent;
@@ -11,13 +12,14 @@ use App\Notifications\OrderConfirmationNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class CheckoutController extends Controller
 {
     /**
      * Page de validation de commande.
      */
-    public function index(): View
+    public function index(): View|RedirectResponse
     {
         $cart = session()->get('cart', []);
 
@@ -57,13 +59,8 @@ class CheckoutController extends Controller
     /**
      * Crée la commande à partir du panier (session).
      */
-    public function store(Request $request)
+    public function store(CheckoutRequest $request)
     {
-        $request->validate([
-            'relay_point_id' => 'nullable|exists:relay_points,id',
-            'delivery_notes' => 'nullable|string|max:500',
-        ]);
-
         $cart = session()->get('cart', []);
 
         if (empty($cart)) {

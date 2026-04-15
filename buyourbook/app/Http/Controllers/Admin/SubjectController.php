@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreSubjectRequest;
+use App\Http\Requests\Admin\UpdateSubjectRequest;
 use App\Models\Subject;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,11 +29,9 @@ class SubjectController extends Controller
         return view('admin.subjects.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreSubjectRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:subjects,name'],
-        ]);
+        $validated = $request->validated();
 
         Subject::create($validated);
 
@@ -44,11 +44,9 @@ class SubjectController extends Controller
         return view('admin.subjects.edit', compact('subject'));
     }
 
-    public function update(Request $request, Subject $subject): RedirectResponse
+    public function update(UpdateSubjectRequest $request, Subject $subject): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:subjects,name,' . $subject->id],
-        ]);
+        $validated = $request->validated();
 
         $subject->update($validated);
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdateOrderStatusRequest;
 use App\Models\Order;
 use App\Models\OrderEvent;
 use App\Notifications\OrderStatusChangedNotification;
@@ -43,21 +44,19 @@ class OrderController extends Controller
         return view('admin.orders.show', compact('order', 'statuses'));
     }
 
-    public function updateStatus(Request $request, Order $order): RedirectResponse
+    public function updateStatus(UpdateOrderStatusRequest $request, Order $order): RedirectResponse
     {
-        $request->validate([
-            'status' => ['required', 'string'],
-        ]);
+        $validated = $request->validated();
 
-        $order->update(['status' => $request->status]);
+        $order->update(['status' => $validated['status']]);
 
         OrderEvent::create([
             'order_id' => $order->id,
-            'status' => $request->status,
+            'status' => $validated['status'],
             'comment' => 'Statut mis à jour par l\'administration.',
         ]);
 
-        $order->user->notify(new OrderStatusChangedNotification($order, $request->status));
+        $order->user->notify(new OrderStatusChangedNotification($order, $validated['status']));
 
         return redirect()->route('admin.orders.show', $order)
             ->with('success', 'Statut mis à jour.');

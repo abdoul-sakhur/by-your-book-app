@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdateUserRoleRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -46,17 +47,15 @@ class UserController extends Controller
         return redirect()->back()->with('success', $msg);
     }
 
-    public function updateRole(Request $request, User $user): RedirectResponse
+    public function updateRole(UpdateUserRoleRequest $request, User $user): RedirectResponse
     {
-        $request->validate([
-            'role' => ['required', 'string'],
-        ]);
+        $validated = $request->validated();
 
         if ($user->id === auth()->id()) {
             return redirect()->back()->with('error', 'Vous ne pouvez pas changer votre propre rôle.');
         }
 
-        $user->update(['role' => $request->role]);
+        $user->update(['role' => $validated['role']]);
 
         return redirect()->back()->with('success', 'Rôle mis à jour.');
     }

@@ -97,7 +97,7 @@
                             @csrf
                             <button type="submit"
                                     class="w-full px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition">
-                                ✓ Approuver
+                                <x-icon name="check" class="w-5 h-5 inline" /> Approuver
                             </button>
                         </form>
 
@@ -105,7 +105,7 @@
                         <div x-data="{ showReject: false }" class="flex-1">
                             <button @click="showReject = !showReject" type="button"
                                     class="w-full px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition">
-                                ✗ Refuser
+                                <x-icon name="cross-2" class="w-5 h-5 inline" /> Refuser
                             </button>
 
                             <form x-show="showReject" x-transition

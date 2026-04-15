@@ -31,7 +31,7 @@
     {{-- En-tête --}}
     <div class="header">
         <div class="header-left">
-            <div class="brand">📚 BuyYourBook</div>
+            <div class="brand">BuyYourBook</div>
             <div class="brand-sub">Plateforme d'achat de livres scolaires — Abidjan, Côte d'Ivoire</div>
         </div>
         <div class="header-right">

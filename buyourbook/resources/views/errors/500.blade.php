@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-app-layout>
 <div class="min-h-[60vh] flex items-center justify-center">
     <div class="text-center px-6">
         <div class="text-8xl font-bold text-primary mb-4">500</div>
@@ -9,4 +7,4 @@
         <a href="{{ route('home') }}" class="btn-primary inline-block">Retour à l'accueil</a>
     </div>
 </div>
-@endsection
+</x-app-layout>

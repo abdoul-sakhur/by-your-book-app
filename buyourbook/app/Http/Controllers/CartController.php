@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CartAddRequest;
 use App\Models\SellerBook;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -50,13 +51,8 @@ class CartController extends Controller
     /**
      * Ajoute un livre au panier (session).
      */
-    public function add(Request $request)
+    public function add(CartAddRequest $request)
     {
-        $request->validate([
-            'seller_book_id' => 'required|exists:seller_books,id',
-            'quantity' => 'required|integer|min:1',
-        ]);
-
         $book = SellerBook::where('id', $request->seller_book_id)
             ->approved()
             ->where('quantity', '>', 0)
@@ -77,12 +73,8 @@ class CartController extends Controller
     /**
      * Met à jour la quantité d'un article.
      */
-    public function update(Request $request)
+    public function update(CartAddRequest $request)
     {
-        $request->validate([
-            'seller_book_id' => 'required|exists:seller_books,id',
-            'quantity' => 'required|integer|min:1',
-        ]);
 
         $cart = session()->get('cart', []);
         $id = $request->seller_book_id;

@@ -9,6 +9,20 @@ export default {
         './resources/views/**/*.blade.php',
     ],
 
+    safelist: [
+        // BookCondition colors: green, blue, yellow
+        // OrderStatus colors: yellow, blue, indigo, green, red, gray
+        // BookStatus colors: yellow, green, red
+        {
+            pattern: /bg-(green|blue|yellow|red|gray|indigo)-(50|100|200)/,
+            variants: [],
+        },
+        {
+            pattern: /text-(green|blue|yellow|red|gray|indigo)-(700|800)/,
+            variants: [],
+        },
+    ],
+
     theme: {
         extend: {
             fontFamily: {

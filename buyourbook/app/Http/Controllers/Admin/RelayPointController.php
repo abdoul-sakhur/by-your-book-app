@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\RelayPointRequest;
 use App\Models\RelayPoint;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -31,17 +32,9 @@ class RelayPointController extends Controller
         return view('admin.relay-points.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(RelayPointRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'address' => ['required', 'string', 'max:500'],
-            'city' => ['required', 'string', 'max:100'],
-            'district' => ['nullable', 'string', 'max:100'],
-            'contact_phone' => ['required', 'string', 'max:20'],
-            'schedule' => ['nullable', 'string', 'max:255'],
-            'is_active' => ['boolean'],
-        ]);
+        $validated = $request->validated();
 
         $validated['is_active'] = $request->boolean('is_active');
 
@@ -56,17 +49,9 @@ class RelayPointController extends Controller
         return view('admin.relay-points.edit', compact('relayPoint'));
     }
 
-    public function update(Request $request, RelayPoint $relayPoint): RedirectResponse
+    public function update(RelayPointRequest $request, RelayPoint $relayPoint): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'address' => ['required', 'string', 'max:500'],
-            'city' => ['required', 'string', 'max:100'],
-            'district' => ['nullable', 'string', 'max:100'],
-            'contact_phone' => ['required', 'string', 'max:20'],
-            'schedule' => ['nullable', 'string', 'max:255'],
-            'is_active' => ['boolean'],
-        ]);
+        $validated = $request->validated();
 
         $validated['is_active'] = $request->boolean('is_active');
 

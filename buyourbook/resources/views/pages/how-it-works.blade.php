@@ -15,7 +15,7 @@
             </div>
 
             {{-- Pour les acheteurs --}}
-            <h3 class="text-2xl font-bold text-gray-900 mb-6">🛒 Pour les acheteurs</h3>
+            <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2"><x-icon name="backpack" class="w-6 h-6" /> Pour les acheteurs</h3>
             <div class="space-y-6 mb-12">
                 <div class="flex gap-4">
                     <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold" style="background-color: var(--color-primary);">1</div>
@@ -48,7 +48,7 @@
             </div>
 
             {{-- Pour les vendeurs --}}
-            <h3 class="text-2xl font-bold text-gray-900 mb-6">💰 Pour les vendeurs</h3>
+            <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2"><x-icon name="tokens" class="w-6 h-6" /> Pour les vendeurs</h3>
             <div class="space-y-6 mb-12">
                 <div class="flex gap-4">
                     <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold" style="background-color: var(--color-secondary);">1</div>
@@ -85,10 +85,10 @@
                 <h3 class="text-xl font-bold">Prêt à commencer ?</h3>
                 <div class="mt-4 flex flex-col sm:flex-row gap-3 justify-center">
                     <a href="{{ route('catalog.schools') }}" class="inline-flex items-center justify-center px-6 py-3 font-semibold rounded-lg text-white" style="background-color: var(--color-secondary);">
-                        📖 Acheter des livres
+                        <x-icon name="reader" class="w-5 h-5 inline" /> Acheter des livres
                     </a>
                     <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-6 py-3 font-semibold rounded-lg bg-white" style="color: var(--color-primary);">
-                        💰 Devenir vendeur
+                        <x-icon name="tokens" class="w-5 h-5 inline" /> Devenir vendeur
                     </a>
                 </div>
             </div>

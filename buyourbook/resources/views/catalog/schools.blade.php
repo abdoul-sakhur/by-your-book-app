@@ -37,9 +37,9 @@
                                         <img src="{{ Storage::url($school->logo) }}" alt="{{ $school->name }}"
                                              class="w-14 h-14 rounded-lg object-cover flex-shrink-0">
                                     @else
-                                        <div class="w-14 h-14 rounded-lg flex items-center justify-center flex-shrink-0 text-2xl"
+                                        <div class="w-14 h-14 rounded-lg flex items-center justify-center flex-shrink-0"
                                              style="background-color: var(--color-primary); color: white;">
-                                            🏫
+                                            <x-icon name="cube" class="w-7 h-7" />
                                         </div>
                                     @endif
                                     <div class="flex-1">

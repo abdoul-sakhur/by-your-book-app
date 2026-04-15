@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\BannerPosition;
 use App\Enums\BannerTarget;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreBannerRequest;
+use App\Http\Requests\Admin\UpdateBannerRequest;
 use App\Models\Banner;
 use App\Models\School;
 use Illuminate\Http\RedirectResponse;
@@ -40,19 +42,9 @@ class BannerController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreBannerRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'image' => ['required', 'image', 'max:2048'],
-            'link_url' => ['nullable', 'url', 'max:500'],
-            'position' => ['required', new Enum(BannerPosition::class)],
-            'target_type' => ['required', new Enum(BannerTarget::class)],
-            'school_id' => ['nullable', 'required_if:target_type,school', 'exists:schools,id'],
-            'is_active' => ['boolean'],
-            'starts_at' => ['nullable', 'date'],
-            'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'],
-        ]);
+        $validated = $request->validated();
 
         $validated['image'] = $request->file('image')->store('banners', 'public');
         $validated['is_active'] = $request->boolean('is_active');
@@ -77,19 +69,9 @@ class BannerController extends Controller
         ]);
     }
 
-    public function update(Request $request, Banner $banner): RedirectResponse
+    public function update(UpdateBannerRequest $request, Banner $banner): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'image' => ['nullable', 'image', 'max:2048'],
-            'link_url' => ['nullable', 'url', 'max:500'],
-            'position' => ['required', new Enum(BannerPosition::class)],
-            'target_type' => ['required', new Enum(BannerTarget::class)],
-            'school_id' => ['nullable', 'required_if:target_type,school', 'exists:schools,id'],
-            'is_active' => ['boolean'],
-            'starts_at' => ['nullable', 'date'],
-            'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'],
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('image')) {
             Storage::disk('public')->delete($banner->image);

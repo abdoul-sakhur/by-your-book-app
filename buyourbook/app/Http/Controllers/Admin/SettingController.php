@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreSettingRequest;
+use App\Http\Requests\Admin\UpdateSettingRequest;
 use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,12 +24,9 @@ class SettingController extends Controller
         return view('admin.settings.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreSettingRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'key' => ['required', 'string', 'max:255', 'unique:settings,key', 'regex:/^[a-z0-9_.]+$/'],
-            'value' => ['nullable', 'string', 'max:2000'],
-        ]);
+        $validated = $request->validated();
 
         Setting::set($validated['key'], $validated['value'] ?? '');
 
@@ -40,11 +39,9 @@ class SettingController extends Controller
         return view('admin.settings.edit', compact('setting'));
     }
 
-    public function update(Request $request, Setting $setting): RedirectResponse
+    public function update(UpdateSettingRequest $request, Setting $setting): RedirectResponse
     {
-        $validated = $request->validate([
-            'value' => ['nullable', 'string', 'max:2000'],
-        ]);
+        $validated = $request->validated();
 
         Setting::set($setting->key, $validated['value'] ?? '');
 

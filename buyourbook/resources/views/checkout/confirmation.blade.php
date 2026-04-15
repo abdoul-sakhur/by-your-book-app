@@ -8,7 +8,7 @@
 
             {{-- Succès --}}
             <div class="bg-green-50 border border-green-200 rounded-lg p-6 text-center mb-8">
-                <div class="w-16 h-16 mx-auto rounded-full flex items-center justify-center text-3xl bg-green-100 mb-4">✅</div>
+                <div class="w-16 h-16 mx-auto rounded-full flex items-center justify-center bg-green-100 mb-4"><x-icon name="check-circled" class="w-8 h-8 text-green-600" /></div>
                 <h3 class="text-xl font-bold text-green-800">Merci pour votre commande !</h3>
                 <p class="mt-2 text-green-700">Votre commande <strong>#{{ $order->id }}</strong> a bien été enregistrée.</p>
             </div>
@@ -71,18 +71,18 @@
             {{-- Point relais --}}
             @if($order->relayPoint)
                 <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                    <h4 class="font-semibold text-gray-800 mb-3">📍 Point de retrait</h4>
+                    <h4 class="font-semibold text-gray-800 mb-3 flex items-center gap-2"><x-icon name="drawing-pin" class="w-5 h-5" /> Point de retrait</h4>
                     <p class="font-medium text-gray-900">{{ $order->relayPoint->name }}</p>
                     <p class="text-sm text-gray-500">{{ $order->relayPoint->address }}, {{ $order->relayPoint->city }}</p>
-                    @if($order->relayPoint->phone)
-                        <p class="text-sm text-gray-500 mt-1">📞 {{ $order->relayPoint->phone }}</p>
+                    @if($order->relayPoint->contact_phone)
+                        <p class="text-sm text-gray-500 mt-1"><x-icon name="mobile" class="w-3 h-3 inline" /> {{ $order->relayPoint->contact_phone }}</p>
                     @endif
                 </div>
             @endif
 
             {{-- Prochaines étapes --}}
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-                <h4 class="font-semibold text-blue-800 mb-3">📋 Prochaines étapes</h4>
+                <h4 class="font-semibold text-blue-800 mb-3 flex items-center gap-2"><x-icon name="clipboard" class="w-5 h-5" /> Prochaines étapes</h4>
                 <ol class="list-decimal list-inside space-y-2 text-sm text-blue-700">
                     <li>Votre commande est en cours de traitement par notre équipe</li>
                     <li>Les livres seront préparés et déposés au point relais choisi</li>
