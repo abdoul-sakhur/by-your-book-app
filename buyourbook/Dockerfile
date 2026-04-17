@@ -79,7 +79,6 @@ COPY docker/nginx.conf /etc/nginx/site-opts.d/buyourbook.conf
 # Copier le script de déploiement
 COPY --chmod=755 docker/deploy.sh /var/www/html/docker/deploy.sh
 
-# Cache des vues (seul cache possible sans .env)
-RUN php artisan view:cache 2>/dev/null || true
+
 
 EXPOSE 8080
