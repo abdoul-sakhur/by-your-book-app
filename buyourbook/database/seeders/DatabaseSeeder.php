@@ -11,6 +11,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminSeeder::class,
             DemoSeeder::class,
+            SliderSeeder::class,
+            PopupSeeder::class,
         ]);
     }
 }

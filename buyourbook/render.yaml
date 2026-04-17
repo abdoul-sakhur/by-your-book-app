@@ -1,0 +1,41 @@
+# Render Blueprint for BuyOurBook (Laravel + Docker)
+# https://render.com/docs/infrastructure-as-code
+
+services:
+  - type: web
+    name: buyourbook
+    env: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    autoDeploy: true
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: FILESYSTEM_DISK
+        value: local
+      - key: BCRYPT_ROUNDS
+        value: 12
+      # Ajoute APP_KEY, APP_URL, MAIL_*, etc. dans le dashboard Render
+    disk:
+      name: buyourbook-data
+      mountPath: /var/www/html/database
+      sizeGB: 1
+    disk2:
+      name: buyourbook-storage
+      mountPath: /var/www/html/storage/app
+      sizeGB: 1
+    startCommand: bash /var/www/html/docker/deploy.sh
+    healthCheckPath: /

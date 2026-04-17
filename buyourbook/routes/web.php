@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\GradeController;
+use App\Http\Controllers\Admin\PopupController;
+use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\OfficialBookController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\RelayPointController;
@@ -26,15 +28,19 @@ use App\Enums\BookStatus;
 use App\Models\Grade;
 use App\Models\OfficialBook;
 use App\Models\Order;
+use App\Models\Popup;
 use App\Models\School;
 use App\Models\SellerBook;
+use App\Models\Slider;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 // --- Page d'accueil ---
 Route::get('/', function () {
     $schools = School::active()->withCount('grades')->with(['grades' => fn($q) => $q->orderBy('level')->limit(1)])->orderBy('name')->limit(8)->get();
-    return view('home', compact('schools'));
+    $slides = Slider::active()->ordered()->get();
+    $popup = Popup::active()->currentlyValid()->latest()->first();
+    return view('home', compact('schools', 'slides', 'popup'));
 })->name('home');
 
 // --- Pages statiques ---
@@ -175,6 +181,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Paramètres
     Route::resource('settings', SettingController::class)->except('show');
+
+    // Sliders publicitaires
+    Route::resource('sliders', SliderController::class)->except('show');
+
+    // Popups publicitaires
+    Route::resource('popups', PopupController::class)->except('show');
 });
 
 // --- Espace Vendeur ---

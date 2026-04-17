@@ -1,0 +1,54 @@
+# =============================================================================
+# BuyOurBook — .dockerignore
+# =============================================================================
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Dependencies (rebuilt in Docker)
+/node_modules
+/vendor
+
+# Build artifacts (rebuilt in Docker)
+/public/build
+/public/hot
+/public/storage
+
+# Environment
+.env
+.env.backup
+.env.production
+.env.local
+
+# IDE / Editor
+/.vscode
+/.idea
+/.fleet
+/.nova
+/.zed
+
+# Tests
+/tests
+/.phpunit.cache
+/.phpunit.result.cache
+phpunit.xml
+
+# Dev tools
+/storage/pail
+/storage/logs/*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation
+CONTEXTE_PROJET.md
+exigeance.txt
+README.md
+DEPLOYMENT.md
+
+# Docker (avoid recursive copy)
+Dockerfile
+docker-compose*.yml

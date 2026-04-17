@@ -89,6 +89,9 @@
         </div>
     </section>
 
+    <!-- Slider publicitaire -->
+    <x-slider-pub :slides="$slides" />
+
     <!-- Section écoles populaires -->
     <section class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -148,4 +151,7 @@
             </div>
         </div>
     </section>
+
+    <!-- Popup publicitaire -->
+    <x-popup-ad :popup="$popup" />
 </x-app-layout>

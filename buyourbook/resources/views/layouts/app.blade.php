@@ -14,6 +14,42 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        {{-- Classes Tailwind absentes du build CSS (Node.js non disponible pour rebuild) --}}
+        <style>
+            /* Opacités couleurs */
+            .bg-black\/50 { background-color: rgba(0,0,0,0.5); }
+            .bg-black\/20 { background-color: rgba(0,0,0,0.2); }
+            .bg-white\/5 { background-color: rgba(255,255,255,0.05); }
+            .bg-white\/20 { background-color: rgba(255,255,255,0.2); }
+            .bg-white\/40 { background-color: rgba(255,255,255,0.4); }
+            .text-white\/80 { color: rgba(255,255,255,0.8); }
+            .text-white\/90 { color: rgba(255,255,255,0.9); }
+            .text-white\/75 { color: rgba(255,255,255,0.75); }
+            .text-white\/60 { color: rgba(255,255,255,0.6); }
+            .border-white\/30 { border-color: rgba(255,255,255,0.3); }
+            /* Gradients */
+            .bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }
+            .bg-gradient-to-t { background-image: linear-gradient(to top, var(--tw-gradient-stops)); }
+            .from-black\/70 { --tw-gradient-from: rgba(0,0,0,0.7); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent); }
+            .from-black\/60 { --tw-gradient-from: rgba(0,0,0,0.6); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent); }
+            .via-black\/40 { --tw-gradient-stops: var(--tw-gradient-from), rgba(0,0,0,0.4), var(--tw-gradient-to, transparent); }
+            .to-black\/20 { --tw-gradient-to: rgba(0,0,0,0.2); }
+            .via-transparent { --tw-gradient-stops: var(--tw-gradient-from), transparent, var(--tw-gradient-to, transparent); }
+            /* Transforms / Hover effects */
+            .hover\:scale-105:hover { transform: scale(1.05); }
+            .hover\:scale-110:hover { transform: scale(1.1); }
+            .active\:scale-95:active { transform: scale(0.95); }
+            .hover\:bg-white\/40:hover { background-color: rgba(255,255,255,0.4); }
+            .hover\:bg-black\/40:hover { background-color: rgba(0,0,0,0.4); }
+            /* Shadows */
+            .drop-shadow-lg { filter: drop-shadow(0 10px 8px rgba(0,0,0,0.04)) drop-shadow(0 4px 3px rgba(0,0,0,0.1)); }
+            .drop-shadow-md { filter: drop-shadow(0 4px 3px rgba(0,0,0,0.07)) drop-shadow(0 2px 2px rgba(0,0,0,0.06)); }
+            /* Object */
+            .object-center { object-position: center; }
+        </style>
+
+        @stack('styles')
     </head>
     <body class="font-sans antialiased" style="background-color: var(--color-bg);">
         <div class="min-h-screen flex flex-col">
@@ -73,5 +109,6 @@
 
             @include('layouts.footer')
         </div>
+        @stack('scripts')
     </body>
 </html>

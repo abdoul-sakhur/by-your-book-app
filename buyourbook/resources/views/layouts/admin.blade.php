@@ -89,6 +89,18 @@
                         Bannières
                     </a>
 
+                    <a href="{{ route('admin.sliders.index') }}"
+                       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.sliders.*') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                        <x-icon name="image" class="w-5 h-5" />
+                        Sliders pub
+                    </a>
+
+                    <a href="{{ route('admin.popups.index') }}"
+                       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.popups.*') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                        <x-icon name="info-circled" class="w-5 h-5" />
+                        Popups pub
+                    </a>
+
                     <a href="{{ route('admin.settings.index') }}"
                        class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.settings.*') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
                         <x-icon name="gear" class="w-5 h-5" />
