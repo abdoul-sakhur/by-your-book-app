@@ -52,6 +52,9 @@
         @stack('styles')
     </head>
     <body class="font-sans antialiased" style="background-color: var(--color-bg);">
+        @php
+            $errors = $errors ?? new Illuminate\Support\ViewErrorBag;
+        @endphp
         <div class="min-h-screen flex flex-col">
             @include('layouts.navigation')
 
