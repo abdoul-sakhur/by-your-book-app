@@ -79,6 +79,8 @@ COPY docker/nginx.conf /etc/nginx/site-opts.d/buyourbook.conf
 # Copier le script de déploiement
 COPY --chmod=755 docker/deploy.sh /var/www/html/docker/deploy.sh
 
+# Supprimer les vues compilées (seront régénérées au runtime)
+RUN rm -rf /var/www/html/storage/framework/views/*
 
 
 EXPOSE 8080
