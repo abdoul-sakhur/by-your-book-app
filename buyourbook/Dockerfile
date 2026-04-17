@@ -36,7 +36,7 @@ COPY . .
 RUN composer dump-autoload --optimize --no-dev
 
 # ---------- Stage 3 : Image finale ----------
-FROM serversideup/php:8.3-fpm-nginx AS production
+FROM serversideup/php:8.4-fpm-nginx AS production
 
 LABEL maintainer="BuyOurBook"
 
