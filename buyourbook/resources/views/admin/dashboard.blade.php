@@ -100,25 +100,82 @@
         </div>
     </div>
 
-    <!-- Top vendeurs -->
-    <div class="mt-8 bg-white rounded-lg shadow">
-        <div class="px-6 py-4 border-b">
-            <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2"><x-icon name="star-filled" class="w-5 h-5 text-yellow-500" /> Top vendeurs</h2>
+    <!-- Indicateurs financiers -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="text-sm font-medium text-gray-500 flex items-center gap-2"><x-icon name="arrow-down" class="w-4 h-4 text-red-500" /> Dépenses totales</div>
+            <div class="mt-2 text-2xl font-bold text-red-600">{{ number_format($totalExpenses, 0, ',', ' ') }} F CFA</div>
+            <p class="mt-1 text-xs text-gray-400">Rachats vendeurs payés</p>
         </div>
-        <div class="divide-y">
-            @forelse ($topSellers as $index => $seller)
-                <div class="flex items-center justify-between px-6 py-3">
-                    <div class="flex items-center gap-3">
-                        <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white {{ $index === 0 ? 'bg-yellow-500' : ($index === 1 ? 'bg-gray-400' : 'bg-amber-700') }}">
-                            {{ $index + 1 }}
-                        </span>
-                        <span class="font-medium text-gray-800">{{ $seller->name }}</span>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="text-sm font-medium text-gray-500 flex items-center gap-2"><x-icon name="arrow-up" class="w-4 h-4 text-green-500" /> Recettes totales</div>
+            <div class="mt-2 text-2xl font-bold text-green-600">{{ number_format($totalRevenue, 0, ',', ' ') }} F CFA</div>
+            <p class="mt-1 text-xs text-gray-400">Ventes + frais de livraison</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="text-sm font-medium text-gray-500 flex items-center gap-2"><x-icon name="star-filled" class="w-4 h-4 text-yellow-500" /> Bénéfice net</div>
+            <div class="mt-2 text-2xl font-bold {{ $netProfit >= 0 ? 'text-green-700' : 'text-red-600' }}">{{ number_format($netProfit, 0, ',', ' ') }} F CFA</div>
+            <p class="mt-1 text-xs text-gray-400">Recettes − Dépenses</p>
+        </div>
+    </div>
+
+    <!-- Fréquentation (30 derniers jours) -->
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="text-sm font-medium text-gray-500">Visiteurs uniques <span class="text-xs">(30j)</span></div>
+            <div class="mt-2 text-3xl font-bold text-blue-600">{{ number_format($uniqueVisitors, 0, ',', ' ') }}</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="text-sm font-medium text-gray-500">Pages vues <span class="text-xs">(30j)</span></div>
+            <div class="mt-2 text-3xl font-bold text-indigo-600">{{ number_format($totalPageViews, 0, ',', ' ') }}</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="text-sm font-medium text-gray-500">Taux de conversion <span class="text-xs">(30j)</span></div>
+            <div class="mt-2 text-3xl font-bold text-purple-600">{{ $conversionRate }} %</div>
+            <p class="text-xs text-gray-400 mt-1">Commandes / visiteurs uniques</p>
+        </div>
+    </div>
+
+    <!-- Top livres vendus + populaires -->
+    <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Livres les plus vendus -->
+        <div class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b">
+                <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2"><x-icon name="star-filled" class="w-5 h-5 text-yellow-500" /> Livres les plus vendus</h2>
+            </div>
+            <div class="divide-y">
+                @forelse ($topSellingBooks as $index => $item)
+                    <div class="flex items-center justify-between px-6 py-3">
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white {{ $index === 0 ? 'bg-yellow-500' : ($index === 1 ? 'bg-gray-400' : 'bg-amber-700') }}">{{ $index + 1 }}</span>
+                            <span class="font-medium text-gray-800 text-sm">{{ $item->book_title ?? '—' }}</span>
+                        </div>
+                        <span class="text-sm text-gray-500">{{ $item->total_sold }} ex.</span>
                     </div>
-                    <span class="text-sm text-gray-500">{{ $seller->sold_count }} livre(s) vendu(s)</span>
-                </div>
-            @empty
-                <p class="px-6 py-4 text-gray-500 text-sm">Aucun vendeur pour le moment.</p>
-            @endforelse
+                @empty
+                    <p class="px-6 py-4 text-gray-500 text-sm">Aucune vente enregistrée.</p>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- Livres les plus populaires (wishlist) -->
+        <div class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b">
+                <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2"><x-icon name="heart" class="w-5 h-5 text-red-500" /> Livres les plus populaires</h2>
+            </div>
+            <div class="divide-y">
+                @forelse ($topPopularBooks as $index => $item)
+                    <div class="flex items-center justify-between px-6 py-3">
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white {{ $index === 0 ? 'bg-red-500' : ($index === 1 ? 'bg-pink-400' : 'bg-rose-300') }}">{{ $index + 1 }}</span>
+                            <span class="font-medium text-gray-800 text-sm">{{ $item->book_title ?? '—' }}</span>
+                        </div>
+                        <span class="text-sm text-gray-500">{{ $item->wishlist_count }} favoris</span>
+                    </div>
+                @empty
+                    <p class="px-6 py-4 text-gray-500 text-sm">Aucun favori enregistré.</p>
+                @endforelse
+            </div>
         </div>
     </div>
 

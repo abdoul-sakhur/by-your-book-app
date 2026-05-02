@@ -19,6 +19,7 @@ class SellerBookRequest extends FormRequest
             'price' => ['required', 'integer', 'min:500', 'max:100000'],
             'quantity' => ['required', 'integer', 'min:1', 'max:20'],
             'images.*' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'purchase_price' => ['nullable', 'integer', 'min:0'],
         ];
     }
 }

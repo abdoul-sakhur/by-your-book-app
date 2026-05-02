@@ -14,16 +14,20 @@ class CheckoutRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'relay_point_id' => 'required|exists:relay_points,id',
-            'delivery_notes' => 'nullable|string|max:500',
+            'delivery_address' => 'required|string|max:500',
+            'delivery_phone'   => 'required|string|max:20',
+            'payment_method'   => 'required|in:cash,mobile_money',
+            'delivery_notes'   => 'nullable|string|max:500',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'relay_point_id.required' => 'Veuillez sélectionner un point de retrait.',
-            'relay_point_id.exists' => 'Le point de retrait sélectionné est invalide.',
+            'delivery_address.required' => 'Veuillez indiquer votre adresse de livraison.',
+            'delivery_phone.required'   => 'Veuillez indiquer un numéro de téléphone.',
+            'payment_method.required'   => 'Veuillez sélectionner un mode de paiement.',
+            'payment_method.in'         => 'Mode de paiement invalide.',
         ];
     }
 }

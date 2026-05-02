@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             DemoSeeder::class,
             SliderSeeder::class,
             PopupSeeder::class,
+            SettingsSeeder::class,
         ]);
     }
 }

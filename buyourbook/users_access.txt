@@ -1,0 +1,3 @@
+admin  ; admin@buyyourbook.ci / password
+client ; sarbaclient / password
+vendeur; saravendeur@buyyourbook.ci / password

@@ -121,4 +121,33 @@ class SellerBookController extends Controller
         return redirect()->route('seller.books.index')
             ->with('success', 'Livre supprimé avec succès.');
     }
+
+    public function buybackRespond(Request $request, SellerBook $book): RedirectResponse
+    {
+        abort_unless($book->user_id === auth()->id(), 403);
+        abort_unless($book->buyback_status === 'negotiating', 403, 'Aucune offre de rachat en attente.');
+
+        $validated = $request->validate([
+            'action'        => ['required', 'in:accept,reject,counter'],
+            'counter_price' => ['required_if:action,counter', 'nullable', 'integer', 'min:1'],
+        ]);
+
+        match ($validated['action']) {
+            'accept'  => $book->update(['buyback_status' => 'accepted']),
+            'reject'  => $book->update(['buyback_status' => 'rejected']),
+            'counter' => $book->update([
+                'counter_price'  => $validated['counter_price'],
+                'buyback_status' => 'negotiating',
+            ]),
+        };
+
+        $messages = [
+            'accept'  => 'Vous avez accepté l\'offre de rachat. L\'administrateur va vous contacter.',
+            'reject'  => 'Vous avez refusé l\'offre de rachat.',
+            'counter' => 'Votre contre-offre a été envoyée à l\'administrateur.',
+        ];
+
+        return redirect()->route('seller.books.index')
+            ->with('success', $messages[$validated['action']]);
+    }
 }

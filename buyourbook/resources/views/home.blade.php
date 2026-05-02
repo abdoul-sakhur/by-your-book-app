@@ -18,7 +18,7 @@
                        style="background-color: var(--color-secondary);">
                         <x-icon name="reader" class="w-5 h-5 inline" /> Acheter mes livres
                     </a>
-                    <a href="{{ route('register') }}"
+                    <a href="{{ auth()->check() && auth()->user()->role?->value === 'seller' ? route('seller.books.create') : route('register') }}"
                        class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-lg bg-white shadow-lg hover:shadow-xl transition"
                        style="color: var(--color-primary);">
                         <x-icon name="tokens" class="w-5 h-5 inline" /> Vendre mes livres

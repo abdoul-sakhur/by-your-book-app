@@ -23,16 +23,26 @@ class SellerBook extends Model
         'status',
         'rejection_reason',
         'admin_notes',
+        'purchase_price',
+        'buyback_price',
+        'counter_price',
+        'buyback_status',
+        'buyback_notes',
+        'admin_paid_seller',
     ];
 
     protected function casts(): array
     {
         return [
-            'condition' => BookCondition::class,
-            'status' => BookStatus::class,
-            'images' => 'array',
-            'price' => 'integer',
-            'quantity' => 'integer',
+            'condition'       => BookCondition::class,
+            'status'          => BookStatus::class,
+            'images'          => 'array',
+            'price'           => 'integer',
+            'quantity'        => 'integer',
+            'purchase_price'  => 'integer',
+            'buyback_price'   => 'integer',
+            'counter_price'   => 'integer',
+            'admin_paid_seller' => 'boolean',
         ];
     }
 

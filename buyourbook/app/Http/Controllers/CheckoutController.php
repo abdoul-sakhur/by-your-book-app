@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use App\Enums\OrderStatus;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\Order;
-use App\Models\RelayPoint;
 use App\Models\OrderEvent;
 use App\Models\SellerBook;
+use App\Models\Setting;
 use App\Notifications\OrderConfirmationNotification;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -50,10 +49,10 @@ class CheckoutController extends Controller
             }
         }
 
-        $relayPoints = RelayPoint::active()->orderBy('city')->orderBy('name')->get();
-        $cities = $relayPoints->pluck('city')->unique()->sort()->values();
+        $deliveryFeeThreshold = (int) Setting::get('free_delivery_threshold', 500000);
+        $deliveryFee = $total >= $deliveryFeeThreshold ? 0 : (int) Setting::get('delivery_fee', 3000);
 
-        return view('checkout.index', compact('items', 'total', 'relayPoints', 'cities'));
+        return view('checkout.index', compact('items', 'total', 'deliveryFee', 'deliveryFeeThreshold'));
     }
 
     /**
@@ -81,46 +80,55 @@ class CheckoutController extends Controller
         $order = null;
 
         DB::transaction(function () use ($request, $cart, $sellerBooks, &$order) {
-            $order = Order::create([
-                'user_id' => auth()->id(),
-                'relay_point_id' => $request->relay_point_id,
-                'status' => OrderStatus::Pending,
-                'total_amount' => 0,
-                'delivery_notes' => $request->delivery_notes,
-            ]);
-
             $total = 0;
 
             foreach ($cart as $id => $qty) {
-                if (!$sellerBooks->has($id)) {
-                    continue;
-                }
+                if (!$sellerBooks->has($id)) continue;
+                $book = $sellerBooks[$id];
+                $actualQty = min($qty, $book->quantity);
+                $total += $book->price * $actualQty;
+            }
+
+            $deliveryFeeThreshold = (int) Setting::get('free_delivery_threshold', 500000);
+            $deliveryFee = $total >= $deliveryFeeThreshold ? 0 : (int) Setting::get('delivery_fee', 3000);
+
+            $order = Order::create([
+                'user_id'          => auth()->id(),
+                'status'           => OrderStatus::Pending,
+                'total_amount'     => 0,
+                'delivery_fee'     => $deliveryFee,
+                'delivery_address' => $request->delivery_address,
+                'delivery_phone'   => $request->delivery_phone,
+                'payment_method'   => $request->payment_method,
+                'delivery_notes'   => $request->delivery_notes,
+            ]);
+
+            $orderTotal = 0;
+
+            foreach ($cart as $id => $qty) {
+                if (!$sellerBooks->has($id)) continue;
 
                 $book = $sellerBooks[$id];
                 $actualQty = min($qty, $book->quantity);
 
-                if ($actualQty <= 0) {
-                    continue;
-                }
+                if ($actualQty <= 0) continue;
 
                 $order->items()->create([
                     'seller_book_id' => $book->id,
-                    'quantity' => $actualQty,
-                    'unit_price' => $book->price,
+                    'quantity'       => $actualQty,
+                    'unit_price'     => $book->price,
                 ]);
 
-                // Décrémenter le stock
                 $book->decrement('quantity', $actualQty);
-
-                $total += $book->price * $actualQty;
+                $orderTotal += $book->price * $actualQty;
             }
 
-            $order->update(['total_amount' => $total]);
+            $order->update(['total_amount' => $orderTotal]);
 
             OrderEvent::create([
                 'order_id' => $order->id,
-                'status' => $order->status,
-                'comment' => 'Commande passée par le client.',
+                'status'   => $order->status,
+                'comment'  => 'Commande passée par le client.',
             ]);
         });
 
@@ -138,8 +146,9 @@ class CheckoutController extends Controller
     {
         abort_unless($order->user_id === auth()->id(), 403);
 
-        $order->load(['items.sellerBook.officialBook', 'items.sellerBook.seller:id,name', 'relayPoint']);
+        $order->load(['items.sellerBook.officialBook', 'items.sellerBook.seller:id,name']);
 
         return view('checkout.confirmation', compact('order'));
     }
 }
+

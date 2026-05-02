@@ -8,7 +8,7 @@
 
     async loadGrades() {
         if (!this.schoolId) { this.grades = []; this.gradeId = ''; this.officialBooks = []; this.officialBookId = ''; return; }
-        const res = await fetch(`/admin/api/grades?school_id=${this.schoolId}`);
+        const res = await fetch(`/seller/api/grades?school_id=${this.schoolId}`);
         this.grades = await res.json();
         if (!this.grades.find(g => g.id == this.gradeId)) { this.gradeId = ''; this.officialBooks = []; this.officialBookId = ''; }
         else { this.loadBooks(); }
@@ -79,7 +79,7 @@
     {{-- Prix & Quantité --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-            <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Prix (FCFA) <span class="text-red-500">*</span></label>
+            <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Prix de vente (FCFA) <span class="text-red-500">*</span></label>
             <input type="number" id="price" name="price" value="{{ old('price', isset($book) ? $book->price : '') }}"
                    min="500" max="100000" step="100" required
                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]"
@@ -93,6 +93,18 @@
                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]">
             @error('quantity') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
         </div>
+    </div>
+
+    {{-- Prix d'achat initial (pour rachat) --}}
+    <div>
+        <label for="purchase_price" class="block text-sm font-medium text-gray-700 mb-1">Prix auquel vous avez acheté ce livre (FCFA) <span class="text-gray-400 font-normal">— optionnel</span></label>
+        <input type="number" id="purchase_price" name="purchase_price"
+               value="{{ old('purchase_price', isset($book) ? $book->purchase_price : '') }}"
+               min="0" step="100"
+               class="w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]"
+               placeholder="Laissez vide si inconnu">
+        <p class="text-xs text-gray-500 mt-1">Cette information aide à déterminer une offre de rachat équitable.</p>
+        @error('purchase_price') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
     </div>
 
     {{-- Images --}}

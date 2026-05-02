@@ -58,36 +58,69 @@
                                 </tr>
                             @endforeach
                         </tbody>
-                        <tfoot>
-                            <tr class="border-t-2 border-gray-200">
+                        <tfoot class="border-t-2 border-gray-200">
+                            @if($order->delivery_fee > 0)
+                            <tr>
+                                <td colspan="2" class="px-4 py-2 text-right text-gray-500 text-sm">Sous-total</td>
+                                <td class="text-right px-4 py-2 text-gray-700 text-sm">{{ number_format($order->total_amount, 0, ',', ' ') }} F</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="px-4 py-2 text-right text-gray-500 text-sm">Livraison</td>
+                                <td class="text-right px-4 py-2 text-gray-700 text-sm">{{ number_format($order->delivery_fee, 0, ',', ' ') }} F CFA</td>
+                            </tr>
+                            @endif
+                            <tr>
                                 <td colspan="2" class="px-4 py-3 text-right font-bold text-gray-900">Total</td>
-                                <td class="text-right px-4 py-3 font-bold text-lg" style="color: var(--color-primary);">{{ number_format($order->total_amount, 0, ',', ' ') }} FCFA</td>
+                                <td class="text-right px-4 py-3 font-bold text-lg" style="color: var(--color-primary);">{{ number_format($order->total_amount + $order->delivery_fee, 0, ',', ' ') }} F CFA</td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
             </div>
 
-            {{-- Point relais --}}
-            @if($order->relayPoint)
-                <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                    <h4 class="font-semibold text-gray-800 mb-3 flex items-center gap-2"><x-icon name="drawing-pin" class="w-5 h-5" /> Point de retrait</h4>
-                    <p class="font-medium text-gray-900">{{ $order->relayPoint->name }}</p>
-                    <p class="text-sm text-gray-500">{{ $order->relayPoint->address }}, {{ $order->relayPoint->city }}</p>
-                    @if($order->relayPoint->contact_phone)
-                        <p class="text-sm text-gray-500 mt-1"><x-icon name="mobile" class="w-3 h-3 inline" /> {{ $order->relayPoint->contact_phone }}</p>
-                    @endif
+            {{-- Livraison + paiement --}}
+            <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                <h4 class="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <x-icon name="home" class="w-5 h-5" /> Livraison à domicile
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <p class="text-gray-500 mb-1">Adresse de livraison</p>
+                        <p class="font-medium text-gray-900">{{ $order->delivery_address }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 mb-1">Téléphone</p>
+                        <p class="font-medium text-gray-900">{{ $order->delivery_phone }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 mb-1">Mode de paiement</p>
+                        <p class="font-medium text-gray-900">
+                            {{ $order->payment_method === 'mobile_money' ? '📱 Mobile Money' : '💵 Cash à la livraison' }}
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 mb-1">Frais de livraison</p>
+                        <p class="font-medium {{ $order->delivery_fee === 0 ? 'text-green-600' : 'text-gray-900' }}">
+                            {{ $order->delivery_fee === 0 ? 'Gratuit' : number_format($order->delivery_fee, 0, ',', ' ') . ' F CFA' }}
+                        </p>
+                    </div>
                 </div>
-            @endif
+                @if($order->delivery_notes)
+                    <div class="mt-3 pt-3 border-t border-gray-100">
+                        <p class="text-gray-500 text-sm mb-1">Instructions</p>
+                        <p class="text-sm text-gray-700">{{ $order->delivery_notes }}</p>
+                    </div>
+                @endif
+            </div>
 
             {{-- Prochaines étapes --}}
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
                 <h4 class="font-semibold text-blue-800 mb-3 flex items-center gap-2"><x-icon name="clipboard" class="w-5 h-5" /> Prochaines étapes</h4>
                 <ol class="list-decimal list-inside space-y-2 text-sm text-blue-700">
                     <li>Votre commande est en cours de traitement par notre équipe</li>
-                    <li>Les livres seront préparés et déposés au point relais choisi</li>
-                    <li>Vous serez notifié quand votre commande sera prête à être récupérée</li>
-                    <li>Présentez-vous au point relais avec votre numéro de commande <strong>#{{ $order->id }}</strong></li>
+                    <li>Les livres seront préparés et expédiés à votre adresse</li>
+                    <li>Vous serez notifié de chaque étape par email</li>
+                    <li>À la livraison, @if($order->payment_method === 'cash') réglez en espèces le montant de <strong>{{ number_format($order->total_amount + $order->delivery_fee, 0, ',', ' ') }} F CFA</strong>@else le paiement Mobile Money vous sera communiqué@endif</li>
                 </ol>
             </div>
 

@@ -151,6 +151,98 @@
             <div class="mt-6">
                 <a href="{{ route('admin.seller-books.index') }}" class="text-sm text-gray-500 hover:text-gray-700">← Retour à la liste</a>
             </div>
+
+            {{-- ===== SECTION RACHAT ===== --}}
+            <div class="mt-8 bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-1">Rachat de livre</h3>
+                <p class="text-sm text-gray-500 mb-5">
+                    Proposez un prix au vendeur pour racheter ce livre. Le vendeur pourra accepter ou refuser.
+                </p>
+
+                {{-- Prix d'achat du vendeur --}}
+                <div class="mb-4 flex items-center gap-3">
+                    <span class="text-sm text-gray-600">Prix d'achat déclaré par le vendeur :</span>
+                    @if($sellerBook->purchase_price)
+                        <span class="font-semibold text-gray-900">{{ number_format($sellerBook->purchase_price, 0, ',', ' ') }} FCFA</span>
+                    @else
+                        <span class="text-gray-400 italic">Non renseigné</span>
+                    @endif
+                </div>
+
+                {{-- Statut actuel --}}
+                @php
+                    $bsColors = ['pending'=>'gray','negotiating'=>'blue','accepted'=>'green','rejected'=>'red'];
+                    $bsLabels = ['pending'=>'Aucune offre','negotiating'=>'Offre en cours','accepted'=>'Accepté','rejected'=>'Refusé'];
+                    $bs = $sellerBook->buyback_status ?? 'pending';
+                    $bsColor = $bsColors[$bs] ?? 'gray';
+                    $bsLabel = $bsLabels[$bs] ?? $bs;
+                @endphp
+                <div class="flex flex-wrap items-center gap-4 mb-5">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-{{ $bsColor }}-100 text-{{ $bsColor }}-800">
+                        {{ $bsLabel }}
+                    </span>
+                    @if($sellerBook->buyback_price)
+                        <span class="text-sm text-gray-700">Offre admin : <strong>{{ number_format($sellerBook->buyback_price, 0, ',', ' ') }} FCFA</strong></span>
+                    @endif
+                    @if($sellerBook->counter_price)
+                        <span class="text-sm text-amber-700">Contre-offre vendeur : <strong>{{ number_format($sellerBook->counter_price, 0, ',', ' ') }} FCFA</strong></span>
+                    @endif
+                    @if($sellerBook->admin_paid_seller)
+                        <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">✓ Payé</span>
+                    @endif
+                </div>
+                @if($sellerBook->buyback_notes)
+                    <p class="text-sm text-gray-600 mb-4 italic">{{ $sellerBook->buyback_notes }}</p>
+                @endif
+
+                <div class="flex flex-wrap gap-4">
+                    {{-- Formulaire d'offre (toujours disponible pour modifier) --}}
+                    @unless($sellerBook->admin_paid_seller)
+                    <form action="{{ route('admin.seller-books.buyback-propose', $sellerBook) }}" method="POST"
+                          x-data="{ open: false }" class="flex-1 min-w-[260px]">
+                        @csrf
+                        <button type="button" @click="open = !open"
+                                class="w-full px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition">
+                            {{ $sellerBook->buyback_status === 'negotiating' ? 'Modifier l\'offre' : 'Proposer un rachat' }}
+                        </button>
+                        <div x-show="open" x-transition class="mt-3 space-y-3 border border-blue-200 rounded-lg p-4 bg-blue-50">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Prix proposé (FCFA) <span class="text-red-500">*</span></label>
+                                <input type="number" name="buyback_price" min="1"
+                                       value="{{ old('buyback_price', $sellerBook->buyback_price) }}"
+                                       class="w-full rounded-md border-gray-300 shadow-sm text-sm"
+                                       placeholder="ex: 5000">
+                                @error('buyback_price')<p class="text-red-600 text-xs mt-1">{{ $message }}</p>@enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Message au vendeur</label>
+                                <textarea name="buyback_notes" rows="2"
+                                          class="w-full rounded-md border-gray-300 shadow-sm text-sm"
+                                          placeholder="Explication facultative…">{{ old('buyback_notes', $sellerBook->buyback_notes) }}</textarea>
+                            </div>
+                            <button type="submit"
+                                    class="px-4 py-2 bg-blue-700 text-white text-sm rounded-lg hover:bg-blue-800">
+                                Envoyer l'offre
+                            </button>
+                        </div>
+                    </form>
+                    @endunless
+
+                    {{-- Marquer comme payé --}}
+                    @if($sellerBook->buyback_status === 'accepted' && !$sellerBook->admin_paid_seller)
+                        <form action="{{ route('admin.seller-books.mark-paid', $sellerBook) }}" method="POST"
+                              onsubmit="return confirm('Confirmer le paiement au vendeur ?')">
+                            @csrf
+                            <button type="submit"
+                                    class="px-6 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition">
+                                ✓ Marquer comme payé
+                            </button>
+                        </form>
+                    @endif
+                </div>
+            </div>
+            {{-- ===== FIN SECTION RACHAT ===== --}}
+
         </div>
     </div>
 </x-admin-layout>

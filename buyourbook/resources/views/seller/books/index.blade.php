@@ -80,6 +80,20 @@
                                     @if($book->status === \App\Enums\BookStatus::Rejected && $book->rejection_reason)
                                         <p class="text-xs text-red-600 mt-1">{{ $book->rejection_reason }}</p>
                                     @endif
+                                    {{-- Badge offre de rachat --}}
+                                    @if($book->buyback_status === 'negotiating' && $book->buyback_price)
+                                        <span class="mt-1 inline-flex px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            Offre rachat : {{ number_format($book->buyback_price, 0, ',', ' ') }} F
+                                        </span>
+                                    @elseif($book->buyback_status === 'accepted')
+                                        <span class="mt-1 inline-flex px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                            Rachat accepté{{ $book->admin_paid_seller ? ' · Payé ✓' : '' }}
+                                        </span>
+                                    @elseif($book->buyback_status === 'rejected')
+                                        <span class="mt-1 inline-flex px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                            Rachat refusé
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 text-right text-sm space-x-2">
                                     @if(in_array($book->status, [\App\Enums\BookStatus::Pending, \App\Enums\BookStatus::Rejected]))
@@ -92,6 +106,14 @@
                                             <button type="submit" class="text-red-600 hover:text-red-900">Supprimer</button>
                                         </form>
                                     @endunless
+                                    {{-- Répondre à une offre de rachat --}}
+                                    @if($book->buyback_status === 'negotiating' && $book->buyback_price)
+                                        <button type="button"
+                                                @click="$dispatch('open-buyback', { id: {{ $book->id }}, price: {{ $book->buyback_price }}, notes: {{ json_encode($book->buyback_notes ?? '') }} })"
+                                                class="text-blue-700 font-semibold hover:text-blue-900">
+                                            Répondre
+                                        </button>
+                                    @endif
                                 </td>
                             </tr>
                         @empty
@@ -106,6 +128,60 @@
             </div>
 
             <div class="mt-4">{{ $books->links() }}</div>
+        </div>
+    </div>
+
+    {{-- Modal réponse offre de rachat --}}
+    <div x-data="{
+            open: false, bookId: null, offerPrice: 0, offerNotes: '',
+            action: 'accept', counterPrice: ''
+         }"
+         @open-buyback.window="open = true; bookId = $event.detail.id; offerPrice = $event.detail.price; offerNotes = $event.detail.notes; action = 'accept'; counterPrice = ''">
+
+        <div x-show="open" x-transition.opacity class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+            <div @click.outside="open = false" class="bg-white rounded-xl shadow-xl w-full max-w-md">
+                <div class="p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-1">Offre de rachat</h3>
+                    <p class="text-sm text-gray-600 mb-4">
+                        L'administrateur propose de racheter ce livre pour
+                        <strong x-text="offerPrice.toLocaleString('fr-FR') + ' FCFA'"></strong>.
+                    </p>
+                    <p x-show="offerNotes" class="text-sm italic text-gray-500 mb-4" x-text="offerNotes"></p>
+
+                    <form :action="'/seller/books/' + bookId + '/buyback-respond'" method="POST">
+                        @csrf
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="radio" name="action" value="accept" x-model="action" class="text-green-600">
+                                <span class="text-sm font-medium text-gray-800">Accepter l'offre</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="radio" name="action" value="counter" x-model="action" class="text-blue-600">
+                                <span class="text-sm font-medium text-gray-800">Faire une contre-offre</span>
+                            </label>
+                            <div x-show="action === 'counter'" x-transition class="ml-7">
+                                <input type="number" name="counter_price" x-model="counterPrice"
+                                       :required="action === 'counter'"
+                                       min="1" placeholder="Votre prix (FCFA)"
+                                       class="w-full rounded-md border-gray-300 shadow-sm text-sm">
+                            </div>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="radio" name="action" value="reject" x-model="action" class="text-red-600">
+                                <span class="text-sm font-medium text-gray-800">Refuser l'offre</span>
+                            </label>
+                        </div>
+                        <div class="mt-6 flex gap-3 justify-end">
+                            <button type="button" @click="open = false"
+                                    class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">Annuler</button>
+                            <button type="submit"
+                                    :class="action === 'reject' ? 'bg-red-600 hover:bg-red-700' : (action === 'accept' ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700')"
+                                    class="px-6 py-2 text-sm font-semibold text-white rounded-lg transition">
+                                Confirmer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </x-app-layout>

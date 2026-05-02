@@ -1,10 +1,19 @@
 <x-app-layout>
     <x-slot name="title">Passer la commande</x-slot>
 
-    <section class="py-10" x-data="{ selectedCity: '' }">
+    <section class="py-10">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <h1 class="text-2xl font-bold text-gray-900 mb-6">Valider ma commande</h1>
+
+            {{-- Message livraison à domicile --}}
+            <div class="mb-6 rounded-xl p-4 flex items-start gap-3" style="background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border: 1px solid #a5d6a7;">
+                <x-icon name="home" class="w-6 h-6 mt-0.5 flex-shrink-0" style="color: var(--color-primary);" />
+                <div>
+                    <p class="font-semibold text-gray-800">Livraison à domicile</p>
+                    <p class="text-sm text-gray-600 mt-0.5">Vous n'avez pas besoin de vous déplacer – achetez vos livres et recevez-les chez vous.</p>
+                </div>
+            </div>
 
             {{-- Erreurs de validation --}}
             @if($errors->any())
@@ -43,9 +52,29 @@
                     @endforeach
                 </div>
 
-                <div class="border-t border-gray-200 mt-4 pt-4 flex justify-between items-center">
-                    <p class="text-lg font-semibold text-gray-800">Total</p>
-                    <p class="text-2xl font-bold" style="color: var(--color-primary);">{{ number_format($total, 0, ',', ' ') }} F CFA</p>
+                <div class="border-t border-gray-200 mt-4 pt-4 space-y-2">
+                    <div class="flex justify-between items-center text-sm text-gray-600">
+                        <span>Sous-total</span>
+                        <span>{{ number_format($total, 0, ',', ' ') }} F CFA</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-600">
+                            Frais de livraison
+                            @if($deliveryFee === 0)
+                                <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Gratuit</span>
+                            @endif
+                        </span>
+                        <span class="{{ $deliveryFee === 0 ? 'text-green-600 font-medium' : 'text-gray-700' }}">
+                            {{ $deliveryFee === 0 ? 'Gratuit' : number_format($deliveryFee, 0, ',', ' ') . ' F CFA' }}
+                        </span>
+                    </div>
+                    @if($deliveryFee > 0)
+                        <p class="text-xs text-gray-400">Livraison gratuite dès {{ number_format($deliveryFeeThreshold, 0, ',', ' ') }} F CFA d'achats.</p>
+                    @endif
+                    <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                        <p class="text-lg font-semibold text-gray-800">Total</p>
+                        <p class="text-2xl font-bold" style="color: var(--color-primary);">{{ number_format($total + $deliveryFee, 0, ',', ' ') }} F CFA</p>
+                    </div>
                 </div>
             </div>
 
@@ -53,59 +82,79 @@
             <form action="{{ route('checkout.store') }}" method="POST">
                 @csrf
 
-                {{-- Point relais --}}
+                {{-- Adresse de livraison --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><x-icon name="drawing-pin" class="w-5 h-5" /> Point de retrait</h2>
-
-                    @if($relayPoints->count() > 0)
-                        {{-- Filtre par ville --}}
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Filtrer par ville</label>
-                            <select x-model="selectedCity" class="rounded-lg border-gray-300 w-full sm:w-auto">
-                                <option value="">Toutes les villes</option>
-                                @foreach($cities as $city)
-                                    <option value="{{ $city }}">{{ $city }}</option>
-                                @endforeach
-                            </select>
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        <x-icon name="home" class="w-5 h-5" /> Adresse de livraison
+                    </h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="sm:col-span-2">
+                            <label for="delivery_address" class="block text-sm font-medium text-gray-700 mb-1">
+                                Adresse complète <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="delivery_address" name="delivery_address"
+                                   value="{{ old('delivery_address', auth()->user()->address ?? '') }}"
+                                   placeholder="Quartier, rue, numéro, points de repère…"
+                                   class="w-full rounded-lg border-gray-300 focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]"
+                                   required>
+                            @error('delivery_address')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            @foreach($relayPoints as $rp)
-                                <label x-show="!selectedCity || selectedCity === '{{ $rp->city }}'"
-                                       class="relative flex items-start p-4 border rounded-lg cursor-pointer hover:border-[var(--color-primary)] transition"
-                                       :class="{ 'border-[var(--color-primary)] bg-green-50 ring-1 ring-[var(--color-primary)]': $refs.rp{{ $rp->id }}?.checked }">
-                                    <input type="radio" name="relay_point_id" value="{{ $rp->id }}"
-                                           x-ref="rp{{ $rp->id }}"
-                                           class="mt-0.5 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
-                                           {{ old('relay_point_id') == $rp->id ? 'checked' : '' }}>
-                                    <div class="ml-3">
-                                        <p class="font-medium text-gray-900 text-sm">{{ $rp->name }}</p>
-                                        <p class="text-xs text-gray-500">{{ $rp->address }}, {{ $rp->district }} — {{ $rp->city }}</p>
-                                        @if($rp->schedule)
-                                            <p class="text-xs text-gray-400 mt-1"><x-icon name="clock" class="w-3 h-3 inline" /> {{ $rp->schedule }}</p>
-                                        @endif
-                                        @if($rp->contact_phone)
-                                            <p class="text-xs text-gray-400"><x-icon name="mobile" class="w-3 h-3 inline" /> {{ $rp->contact_phone }}</p>
-                                        @endif
-                                    </div>
-                                </label>
-                            @endforeach
+                        <div>
+                            <label for="delivery_phone" class="block text-sm font-medium text-gray-700 mb-1">
+                                Téléphone <span class="text-red-500">*</span>
+                            </label>
+                            <input type="tel" id="delivery_phone" name="delivery_phone"
+                                   value="{{ old('delivery_phone', auth()->user()->phone ?? '') }}"
+                                   placeholder="Ex : 07 00 00 00 00"
+                                   class="w-full rounded-lg border-gray-300 focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]"
+                                   required>
+                            @error('delivery_phone')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
-                    @else
-                        <p class="text-gray-400 text-sm">Aucun point relais disponible pour le moment.</p>
-                    @endif
+                    </div>
+                </div>
 
-                    @error('relay_point_id')
+                {{-- Mode de paiement --}}
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                        <x-icon name="card-stack" class="w-5 h-5" /> Mode de paiement
+                    </h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <label class="flex items-start p-4 border-2 rounded-xl cursor-pointer transition hover:border-gray-300
+                            {{ old('payment_method', 'cash') === 'cash' ? 'border-[var(--color-primary)] bg-green-50' : 'border-gray-200' }}">
+                            <input type="radio" name="payment_method" value="cash"
+                                   {{ old('payment_method', 'cash') === 'cash' ? 'checked' : '' }}
+                                   class="mt-0.5 text-[var(--color-primary)] focus:ring-[var(--color-primary)]">
+                            <div class="ml-3">
+                                <p class="font-semibold text-gray-800">💵 Cash à la livraison</p>
+                                <p class="text-xs text-gray-500 mt-0.5">Payez en espèces à la réception de vos livres.</p>
+                            </div>
+                        </label>
+                        <label class="flex items-start p-4 border-2 rounded-xl cursor-pointer transition hover:border-gray-300
+                            {{ old('payment_method') === 'mobile_money' ? 'border-[var(--color-primary)] bg-green-50' : 'border-gray-200' }}">
+                            <input type="radio" name="payment_method" value="mobile_money"
+                                   {{ old('payment_method') === 'mobile_money' ? 'checked' : '' }}
+                                   class="mt-0.5 text-[var(--color-primary)] focus:ring-[var(--color-primary)]">
+                            <div class="ml-3">
+                                <p class="font-semibold text-gray-800">📱 Mobile Money</p>
+                                <p class="text-xs text-gray-500 mt-0.5">Orange Money, MTN MoMo, Wave, Moov Money…</p>
+                            </div>
+                        </label>
+                    </div>
+                    @error('payment_method')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 {{-- Notes --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-3">Notes (optionnel)</h2>
+                    <h2 class="text-lg font-semibold text-gray-800 mb-3">Instructions (optionnel)</h2>
                     <textarea name="delivery_notes" rows="3"
                               class="w-full rounded-lg border-gray-300 focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]"
-                              placeholder="Instructions spéciales, horaires préférés...">{{ old('delivery_notes') }}</textarea>
+                              placeholder="Horaires préférés, points de repère supplémentaires…">{{ old('delivery_notes') }}</textarea>
                 </div>
 
                 {{-- Actions --}}
@@ -114,7 +163,8 @@
                         Retour au panier
                     </a>
                     <button type="submit" class="btn-primary flex-1 !py-3 text-center flex items-center justify-center gap-2">
-                        <x-icon name="check-circled" class="w-5 h-5" /> Confirmer la commande — {{ number_format($total, 0, ',', ' ') }} F CFA
+                        <x-icon name="check-circled" class="w-5 h-5" />
+                        Confirmer la commande — {{ number_format($total + $deliveryFee, 0, ',', ' ') }} F CFA
                     </button>
                 </div>
             </form>

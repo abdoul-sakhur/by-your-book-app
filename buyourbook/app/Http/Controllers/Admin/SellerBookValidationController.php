@@ -68,4 +68,31 @@ class SellerBookValidationController extends Controller
         return redirect()->route('admin.seller-books.index')
             ->with('success', "Livre de « {$sellerBook->seller->name} » refusé.");
     }
+
+    public function buybackPropose(Request $request, SellerBook $sellerBook): RedirectResponse
+    {
+        $validated = $request->validate([
+            'buyback_price' => ['required', 'integer', 'min:1'],
+            'buyback_notes' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $sellerBook->update([
+            'buyback_price'  => $validated['buyback_price'],
+            'buyback_notes'  => $validated['buyback_notes'] ?? null,
+            'buyback_status' => 'negotiating',
+        ]);
+
+        return redirect()->route('admin.seller-books.show', $sellerBook)
+            ->with('success', 'Offre de rachat envoyée au vendeur.');
+    }
+
+    public function markPaid(SellerBook $sellerBook): RedirectResponse
+    {
+        abort_unless($sellerBook->buyback_status === 'accepted', 403, 'Le vendeur n\'a pas encore accepté l\'offre.');
+
+        $sellerBook->update(['admin_paid_seller' => true]);
+
+        return redirect()->route('admin.seller-books.show', $sellerBook)
+            ->with('success', 'Paiement du vendeur marqué comme effectué.');
+    }
 }

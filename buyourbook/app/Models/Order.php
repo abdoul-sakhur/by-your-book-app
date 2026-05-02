@@ -17,6 +17,10 @@ class Order extends Model
         'relay_point_id',
         'status',
         'total_amount',
+        'delivery_fee',
+        'payment_method',
+        'delivery_address',
+        'delivery_phone',
         'delivery_notes',
     ];
 
@@ -25,6 +29,7 @@ class Order extends Model
         return [
             'status' => OrderStatus::class,
             'total_amount' => 'integer',
+            'delivery_fee' => 'integer',
         ];
     }
 

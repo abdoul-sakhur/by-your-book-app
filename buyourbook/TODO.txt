@@ -1,0 +1,109 @@
+==============================================================
+  BuyOurBook — TÂCHES RESTANTES (mise à jour : 02/05/2026)
+==============================================================
+
+--------------------------------------------------------------
+  PRIORITÉ HAUTE (Démo / Production)
+--------------------------------------------------------------
+
+[ ] 1. Lien "Paramètres généraux" dans la sidebar admin
+        - La page /admin/settings/general existe mais n'a pas
+          de lien dans le menu de navigation admin.
+        - Fichier : resources/views/layouts/admin.blade.php
+          (ou partials/admin-nav.blade.php selon structure)
+
+[ ] 2. Notification vendeur — offre de rachat reçue
+        - Quand l'admin propose un buyback, le vendeur devrait
+          recevoir une notification mail/DB.
+        - Créer : app/Notifications/BuybackOfferNotification.php
+        - Déclencher dans : SellerBookValidationController@buybackPropose
+
+[ ] 3. Notification admin — réponse vendeur au rachat
+        - Quand le vendeur accepte / contre-offre / refuse,
+          notifier l'admin.
+        - Créer : app/Notifications/BuybackResponseNotification.php
+        - Déclencher dans : SellerBookController@buybackRespond
+
+[ ] 4. Configuration SMTP email (pour les notifications)
+        - Actuellement MAIL_MAILER=log en développement.
+        - Configurer .env pour production :
+          MAIL_MAILER=smtp, MAIL_HOST, MAIL_PORT, etc.
+        - Tester envoi de OrderConfirmationNotification.
+
+[ ] 5. Tests automatisés (PHPUnit)
+        - Écrire des tests Feature pour :
+          · Flux de commande (checkout → confirmation)
+          · Flux de rachat (propose → respond → mark-paid)
+          · Contrôle d'accès (middleware role:admin / role:seller)
+        - Dossier : tests/Feature/
+
+--------------------------------------------------------------
+  PRIORITÉ MOYENNE (Améliorations UX)
+--------------------------------------------------------------
+
+[ ] 6. Dashboard vendeur avec stats de rachat
+        - Afficher sur /seller/dashboard :
+          · Nombre de livres avec offre en cours
+          · Montant total des rachats acceptés
+          · Montant des rachats en attente de paiement
+
+[ ] 7. Pagination de la liste des livres vendeur
+        - seller/books/index.blade.php : ajouter ->paginate(20)
+          dans SellerBookController@index si beaucoup de livres.
+
+[ ] 8. Filtre/recherche dans les listes admin
+        - admin/seller-books/index : filtrer par statut, école, vendeur
+        - admin/orders/index : filtrer par statut, date, montant
+
+[ ] 9. Historique complet du cycle de rachat
+        - Actuellement seuls les champs "courants" sont stockés.
+        - Envisager une table buyback_events (comme order_events)
+          pour tracer chaque étape : qui a proposé, quand, quel prix.
+
+[ ] 10. Améliorer la gestion du panier
+        - Vérifier la disponibilité (quantité) lors du checkout.
+        - Retirer automatiquement les articles épuisés ou
+          dont le livre a été rejeté/désapprouvé.
+
+--------------------------------------------------------------
+  PRIORITÉ BASSE (Production & Scalabilité)
+--------------------------------------------------------------
+
+[ ] 11. Intégration passerelle de paiement
+        - Paiement en ligne (CinetPay, Wave, Orange Money CI).
+        - Actuellement les paiements sont traités manuellement
+          (virement / cash à la livraison).
+
+[ ] 12. Déploiement production
+        - Voir DEPLOYMENT.md pour les instructions Docker.
+        - Configurer .env.production (DB, mail, queue driver).
+        - Configurer queue worker (Supervisor / cron).
+        - Activer HTTPS, configurer domaine buyyourbook.ci.
+
+[ ] 13. Optimisations performance
+        - Ajouter eager loading (with()) dans les contrôleurs
+          qui ont des N+1 (OrderController, CatalogController).
+        - Activer cache d'opcode PHP (OPcache) en production.
+        - Utiliser Redis pour cache et sessions en production.
+
+[ ] 14. SEO et référencement
+        - Ajouter balises meta (title, description) dynamiques
+          par page (livres, écoles, catalogue).
+        - Générer un sitemap.xml automatique.
+        - Optimiser les images (compression, lazy loading).
+
+[ ] 15. Suppression de render.yaml
+        - Le fichier render.yaml a été supprimé (D render.yaml
+          dans git status). Confirmer si le déploiement Render
+          est abandonné ou à remplacer par Docker/autre.
+
+==============================================================
+  RAPPEL COMPTES DE TEST
+==============================================================
+  Admin   : admin@buyyourbook.ci   / password
+  Client  : sarbaclient            / password
+  Vendeur : saravendeur@buyyourbook.ci / password
+
+  Serveur : php artisan serve (depuis c:\Users\DELL\bybook\buyourbook)
+  URL     : http://127.0.0.1:8000
+==============================================================

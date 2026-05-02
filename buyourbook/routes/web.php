@@ -28,11 +28,14 @@ use App\Enums\BookStatus;
 use App\Models\Grade;
 use App\Models\OfficialBook;
 use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\PageView;
 use App\Models\Popup;
 use App\Models\School;
 use App\Models\SellerBook;
 use App\Models\Slider;
 use App\Models\User;
+use App\Models\Wishlist;
 use Illuminate\Support\Facades\Route;
 
 // --- Page d'accueil ---
@@ -116,12 +119,37 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
             ];
         }
 
-        // Top 5 vendeurs
-        $topSellers = User::where('role', 'seller')
-            ->withCount(['sellerBooks as sold_count' => fn ($q) => $q->whereHas('orderItems')])
-            ->orderByDesc('sold_count')
+        // Top 5 vendeurs — remplacé par livres les plus vendus
+        $topSellingBooks = OrderItem::selectRaw('seller_books.official_book_id, official_books.title as book_title, SUM(order_items.quantity) as total_sold')
+            ->join('seller_books', 'seller_books.id', '=', 'order_items.seller_book_id')
+            ->join('official_books', 'official_books.id', '=', 'seller_books.official_book_id')
+            ->groupBy('seller_books.official_book_id', 'official_books.title')
+            ->orderByDesc('total_sold')
             ->take(5)
-            ->get(['id', 'name']);
+            ->get();
+
+        // Top 5 livres les plus populaires (wishlist)
+        $topPopularBooks = \App\Models\Wishlist::selectRaw('wishlists.official_book_id, official_books.title as book_title, COUNT(*) as wishlist_count')
+            ->join('official_books', 'official_books.id', '=', 'wishlists.official_book_id')
+            ->groupBy('wishlists.official_book_id', 'official_books.title')
+            ->orderByDesc('wishlist_count')
+            ->take(5)
+            ->get();
+
+        // Statistiques de fréquentation (30 derniers jours)
+        $last30 = now()->subDays(30)->startOfDay();
+        $uniqueVisitors = PageView::where('viewed_at', '>=', $last30)
+            ->distinct('session_id')->count('session_id');
+        $totalPageViews = PageView::where('viewed_at', '>=', $last30)->count();
+        $ordersLast30 = Order::where('created_at', '>=', $last30)->count();
+        $conversionRate = $uniqueVisitors > 0 ? round($ordersLast30 / $uniqueVisitors * 100, 1) : 0;
+
+        // Indicateurs financiers
+        $totalExpenses = SellerBook::where('admin_paid_seller', true)->sum('buyback_price');
+        $totalRevenue = Order::where('status', '!=', 'cancelled')
+            ->selectRaw('SUM(total_amount + delivery_fee) as grand')
+            ->value('grand') ?? 0;
+        $netProfit = (int)$totalRevenue - (int)$totalExpenses;
 
         // Commandes par statut
         $ordersByStatus = Order::selectRaw('status, COUNT(*) as count')
@@ -131,7 +159,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
         return view('admin.dashboard', compact(
             'schoolsCount', 'booksCount', 'pendingCount', 'ordersCount', 'usersCount', 'revenue',
-            'recentOrders', 'pendingBooks', 'revenueData', 'topSellers', 'ordersByStatus'
+            'recentOrders', 'pendingBooks', 'revenueData', 'ordersByStatus',
+            'topSellingBooks', 'topPopularBooks',
+            'uniqueVisitors', 'totalPageViews', 'conversionRate',
+            'totalExpenses', 'totalRevenue', 'netProfit'
         ));
     })->name('dashboard');
 
@@ -152,6 +183,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('seller-books/{sellerBook}', [SellerBookValidationController::class, 'show'])->name('seller-books.show');
     Route::post('seller-books/{sellerBook}/approve', [SellerBookValidationController::class, 'approve'])->name('seller-books.approve');
     Route::post('seller-books/{sellerBook}/reject', [SellerBookValidationController::class, 'reject'])->name('seller-books.reject');
+    Route::post('seller-books/{sellerBook}/buyback-propose', [SellerBookValidationController::class, 'buybackPropose'])->name('seller-books.buyback-propose');
+    Route::post('seller-books/{sellerBook}/mark-paid', [SellerBookValidationController::class, 'markPaid'])->name('seller-books.mark-paid');
 
     // API interne — classes par école (pour select dynamique Alpine.js)
     Route::get('api/grades', function () {
@@ -181,6 +214,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Paramètres
     Route::resource('settings', SettingController::class)->except('show');
+    Route::get('settings/general', [SettingController::class, 'general'])->name('settings.general');
+    Route::post('settings/general', [SettingController::class, 'saveGeneral'])->name('settings.general.save');
 
     // Sliders publicitaires
     Route::resource('sliders', SliderController::class)->except('show');
@@ -196,10 +231,20 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->g
 
     // CRUD Livres vendeur
     Route::resource('books', SellerBookController::class)->except('show');
+    Route::post('books/{book}/buyback-respond', [SellerBookController::class, 'buybackRespond'])->name('books.buyback-respond');
 
     // Commandes (ventes du vendeur)
     Route::get('orders', [SellerOrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [SellerOrderController::class, 'show'])->name('orders.show');
+
+    // API interne — classes par école (pour select dynamique Alpine.js — vendeur)
+    Route::get('api/grades', function () {
+        $grades = Grade::where('school_id', request('school_id'))
+            ->orderBy('name')
+            ->get(['id', 'name', 'level', 'academic_year']);
+
+        return response()->json($grades);
+    })->name('api.grades');
 
     // API interne — livres officiels par classe (pour select dynamique Alpine.js)
     Route::get('api/official-books', function () {

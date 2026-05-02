@@ -57,4 +57,29 @@ class SettingController extends Controller
         return redirect()->route('admin.settings.index')
             ->with('success', 'Paramètre supprimé.');
     }
+
+    public function general(): View
+    {
+        return view('admin.settings.general', [
+            'delivery_fee'             => Setting::get('delivery_fee', 3000),
+            'free_delivery_threshold'  => Setting::get('free_delivery_threshold', 500000),
+            'tawkto_widget_id'         => Setting::get('tawkto_widget_id', ''),
+        ]);
+    }
+
+    public function saveGeneral(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'delivery_fee'            => ['required', 'integer', 'min:0'],
+            'free_delivery_threshold' => ['required', 'integer', 'min:0'],
+            'tawkto_widget_id'        => ['nullable', 'string', 'max:200'],
+        ]);
+
+        Setting::set('delivery_fee',            (string) $validated['delivery_fee']);
+        Setting::set('free_delivery_threshold', (string) $validated['free_delivery_threshold']);
+        Setting::set('tawkto_widget_id',        $validated['tawkto_widget_id'] ?? '');
+
+        return redirect()->route('admin.settings.general')
+            ->with('success', 'Paramètres enregistrés avec succès.');
+    }
 }
