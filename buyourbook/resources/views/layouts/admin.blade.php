@@ -101,10 +101,10 @@
                         Popups pub
                     </a>
 
-                    <a href="{{ route('admin.settings.index') }}"
-                       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.settings.*') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                    <a href="{{ route('admin.settings.general') }}"
+                       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.settings.general*') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
                         <x-icon name="gear" class="w-5 h-5" />
-                        Paramètres
+                        Paramètres généraux
                     </a>
                 </nav>
 

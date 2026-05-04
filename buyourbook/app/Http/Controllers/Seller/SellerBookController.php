@@ -10,6 +10,8 @@ use App\Models\Grade;
 use App\Models\OfficialBook;
 use App\Models\School;
 use App\Models\SellerBook;
+use App\Models\User;
+use App\Notifications\BuybackResponseNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -140,6 +142,10 @@ class SellerBookController extends Controller
                 'buyback_status' => 'negotiating',
             ]),
         };
+
+        $book->load(['officialBook', 'seller']);
+        $admin = User::where('role', 'admin')->first();
+        $admin?->notify(new BuybackResponseNotification($book, $validated['action']));
 
         $messages = [
             'accept'  => 'Vous avez accepté l\'offre de rachat. L\'administrateur va vous contacter.',

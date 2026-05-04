@@ -231,15 +231,16 @@ class PurchaseWorkflowTest extends TestCase
             ->get(route('checkout.index'))
             ->assertOk()
             ->assertSee('CIAM Maths 6ème')
-            ->assertSee('9 000') // 4500 × 2
-            ->assertSee('Point Relais Cocody');
+            ->assertSee('9 000'); // 4500 × 2
 
         // 5b. Confirmer la commande
         $response = $this->actingAs($this->buyer)
             ->withSession(['cart' => [$sellerBook->id => 2]])
             ->post(route('checkout.store'), [
-                'relay_point_id' => $this->relayPoint->id,
-                'delivery_notes' => 'Merci de préparer rapidement',
+                'delivery_address' => '15 Rue des Fleurs, Cocody',
+                'delivery_phone'   => '0707070707',
+                'payment_method'   => 'cash',
+                'delivery_notes'   => 'Merci de préparer rapidement',
             ]);
 
         // 5c. Redirection vers la page de confirmation
@@ -250,7 +251,7 @@ class PurchaseWorkflowTest extends TestCase
         // 5d. Vérifier la commande
         $this->assertEquals(OrderStatus::Pending, $order->status);
         $this->assertEquals(9000, $order->total_amount); // 4500 × 2
-        $this->assertEquals($this->relayPoint->id, $order->relay_point_id);
+        $this->assertEquals('15 Rue des Fleurs, Cocody', $order->delivery_address);
         $this->assertEquals('Merci de préparer rapidement', $order->delivery_notes);
 
         // 5e. Vérifier les articles
@@ -312,7 +313,7 @@ class PurchaseWorkflowTest extends TestCase
             ->assertOk()
             ->assertSee('CIAM Maths 6ème')
             ->assertSee('9 000')
-            ->assertSee('Point Relais Cocody');
+            ->assertSee('15 Rue des Fleurs, Cocody');
     }
 
     // ==========================================
@@ -467,8 +468,10 @@ class PurchaseWorkflowTest extends TestCase
         $this->actingAs($this->buyer)
             ->withSession(['cart' => [$sellerBook->id => 2]])
             ->post(route('checkout.store'), [
-                'relay_point_id' => $this->relayPoint->id,
-                'delivery_notes' => 'Workflow complet',
+                'delivery_address' => '15 Rue des Fleurs, Cocody',
+                'delivery_phone'   => '0707070707',
+                'payment_method'   => 'cash',
+                'delivery_notes'   => 'Workflow complet',
             ]);
 
         $order = Order::where('user_id', $this->buyer->id)->first();
@@ -552,11 +555,13 @@ class PurchaseWorkflowTest extends TestCase
         $sellerBook = $this->createApprovedBook();
 
         $order = Order::create([
-            'user_id' => $this->buyer->id,
-            'relay_point_id' => $this->relayPoint->id,
-            'status' => OrderStatus::Pending,
-            'total_amount' => 9000,
-            'delivery_notes' => 'Test workflow',
+            'user_id'          => $this->buyer->id,
+            'status'           => OrderStatus::Pending,
+            'total_amount'     => 9000,
+            'delivery_address' => '15 Rue des Fleurs, Cocody',
+            'delivery_phone'   => '0707070707',
+            'payment_method'   => 'cash',
+            'delivery_notes'   => 'Test workflow',
         ]);
 
         $order->items()->create([

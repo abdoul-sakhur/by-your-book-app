@@ -10,7 +10,6 @@ use App\Models\Grade;
 use App\Models\OfficialBook;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\RelayPoint;
 use App\Models\School;
 use App\Models\SellerBook;
 use App\Models\Subject;
@@ -24,7 +23,6 @@ class CartCheckoutTest extends TestCase
 
     private User $buyer;
     private SellerBook $sellerBook;
-    private RelayPoint $relayPoint;
 
     protected function setUp(): void
     {
@@ -52,13 +50,6 @@ class CartCheckoutTest extends TestCase
             'status' => BookStatus::Approved,
         ]);
 
-        $this->relayPoint = RelayPoint::create([
-            'name' => 'Point Cocody',
-            'address' => '123 rue test',
-            'city' => 'Abidjan',
-            'contact_phone' => '0101010101',
-            'is_active' => true,
-        ]);
     }
 
     public function test_add_to_cart(): void
@@ -127,7 +118,7 @@ class CartCheckoutTest extends TestCase
             ->withSession(['cart' => [$this->sellerBook->id => 1]])
             ->get(route('checkout.index'))
             ->assertOk()
-            ->assertSee('Point Cocody');
+            ->assertSee('Livre Test');
     }
 
     public function test_checkout_creates_order(): void
@@ -135,15 +126,17 @@ class CartCheckoutTest extends TestCase
         $this->actingAs($this->buyer)
             ->withSession(['cart' => [$this->sellerBook->id => 2]])
             ->post(route('checkout.store'), [
-                'relay_point_id' => $this->relayPoint->id,
-                'delivery_notes' => 'Merci',
+                'delivery_address' => '15 Rue des Fleurs, Cocody',
+                'delivery_phone'   => '0707070707',
+                'payment_method'   => 'cash',
+                'delivery_notes'   => 'Merci',
             ]);
 
         $order = Order::where('user_id', $this->buyer->id)->first();
         $this->assertNotNull($order);
         $this->assertEquals(OrderStatus::Pending, $order->status);
         $this->assertEquals(10000, $order->total_amount); // 5000 × 2
-        $this->assertEquals($this->relayPoint->id, $order->relay_point_id);
+        $this->assertEquals('15 Rue des Fleurs, Cocody', $order->delivery_address);
 
         // Stock decremented
         $this->sellerBook->refresh();
@@ -166,19 +159,19 @@ class CartCheckoutTest extends TestCase
     {
         $this->actingAs($this->buyer)
             ->post(route('checkout.store'), [
-                'relay_point_id' => $this->relayPoint->id,
+                'delivery_address' => '15 Rue des Fleurs, Cocody',
+                'delivery_phone'   => '0707070707',
+                'payment_method'   => 'cash',
             ])
             ->assertRedirect(route('cart.index'));
     }
 
-    public function test_checkout_validates_relay_point(): void
+    public function test_checkout_validates_required_delivery_fields(): void
     {
         $this->actingAs($this->buyer)
             ->withSession(['cart' => [$this->sellerBook->id => 1]])
-            ->post(route('checkout.store'), [
-                'relay_point_id' => 9999,
-            ])
-            ->assertSessionHasErrors('relay_point_id');
+            ->post(route('checkout.store'), [])
+            ->assertSessionHasErrors(['delivery_address', 'delivery_phone', 'payment_method']);
     }
 
     public function test_cart_count_api(): void

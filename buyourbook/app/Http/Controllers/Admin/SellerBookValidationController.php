@@ -6,6 +6,7 @@ use App\Enums\BookStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\RejectSellerBookRequest;
 use App\Models\SellerBook;
+use App\Notifications\BuybackOfferNotification;
 use App\Notifications\SellerBookStatusNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -81,6 +82,9 @@ class SellerBookValidationController extends Controller
             'buyback_notes'  => $validated['buyback_notes'] ?? null,
             'buyback_status' => 'negotiating',
         ]);
+
+        $sellerBook->load('officialBook');
+        $sellerBook->seller->notify(new BuybackOfferNotification($sellerBook));
 
         return redirect()->route('admin.seller-books.show', $sellerBook)
             ->with('success', 'Offre de rachat envoyée au vendeur.');

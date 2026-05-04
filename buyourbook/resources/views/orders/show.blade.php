@@ -31,10 +31,12 @@
                     <p class="font-bold text-lg mt-1" style="color: var(--color-primary);">{{ number_format($order->total_amount, 0, ',', ' ') }} F CFA</p>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-                    <p class="text-xs text-gray-500 uppercase tracking-wide">Point relais</p>
-                    @if($order->relayPoint)
-                        <p class="font-semibold text-gray-900 mt-1">{{ $order->relayPoint->name }}</p>
-                        <p class="text-xs text-gray-400">{{ $order->relayPoint->address }}, {{ $order->relayPoint->district }}</p>
+                    <p class="text-xs text-gray-500 uppercase tracking-wide">Adresse de livraison</p>
+                    @if($order->delivery_address)
+                        <p class="font-semibold text-gray-900 mt-1">{{ $order->delivery_address }}</p>
+                        @if($order->delivery_phone)
+                            <p class="text-xs text-gray-400">Tél. {{ $order->delivery_phone }}</p>
+                        @endif
                     @else
                         <p class="text-gray-400 mt-1 text-sm">Non spécifié</p>
                     @endif
