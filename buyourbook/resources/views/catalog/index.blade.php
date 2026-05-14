@@ -204,7 +204,7 @@
                     @endif
                     @if($priceMin || $priceMax)
                         <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-yellow-50 text-yellow-700 border border-yellow-200">
-                            💰 @if($priceMin){{ number_format($priceMin,0,',',' ') }} F@endif — @if($priceMax){{ number_format($priceMax,0,',',' ') }} F@endif
+                            💰 {{ $priceMin ? number_format((int)$priceMin,0,',',' ').' F' : '' }} — {{ $priceMax ? number_format((int)$priceMax,0,',',' ').' F' : '' }}
                             <a href="{{ route('catalog.index', array_merge(request()->except(['price_min','price_max']), ['price_min' => '', 'price_max' => ''])) }}" class="ml-1 hover:opacity-70">×</a>
                         </span>
                     @endif
