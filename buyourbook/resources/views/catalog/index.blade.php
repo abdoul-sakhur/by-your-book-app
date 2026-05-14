@@ -218,17 +218,22 @@
                         <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col overflow-hidden">
 
                             {{-- Couverture --}}
-                            <a href="{{ route('catalog.book', $book) }}" class="block relative bg-gray-50">
+                            <a href="{{ route('catalog.book', $book) }}" class="block relative bg-gray-100 overflow-hidden flex-shrink-0" style="height:176px;">
                                 @if($book->cover_image)
+                                    {{-- Skeleton visible tant que l'image charge --}}
+                                    <div class="absolute inset-0 bg-gray-200 animate-pulse"></div>
                                     <img src="{{ Storage::url($book->cover_image) }}" alt="{{ $book->title }}"
-                                         class="w-full h-44 object-cover">
+                                         class="absolute inset-0 w-full h-full object-cover"
+                                         style="opacity:0; transition:opacity .25s"
+                                         onload="this.style.opacity=1; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; var sk=this.previousElementSibling; sk.classList.remove('animate-pulse'); sk.innerHTML='<div class=\'h-full flex items-center justify-center\'><svg class=\'w-14 h-14\' style=\'color:#d1d5db\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253\'/></svg></div>';">
                                 @else
-                                    <div class="w-full h-44 flex items-center justify-center">
-                                        <x-icon name="reader" class="w-16 h-16 text-gray-300" />
+                                    <div class="absolute inset-0 flex items-center justify-center bg-gray-50">
+                                        <x-icon name="reader" class="w-14 h-14 text-gray-300" />
                                     </div>
                                 @endif
                                 {{-- Badge offres --}}
-                                <span class="absolute top-2 right-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-white/90 shadow text-gray-700">
+                                <span class="absolute top-2 right-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-white/90 shadow text-gray-700 z-10">
                                     {{ $book->seller_books_count }} offre{{ $book->seller_books_count > 1 ? 's' : '' }}
                                 </span>
                             </a>
