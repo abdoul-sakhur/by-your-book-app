@@ -90,7 +90,7 @@
                     </div>
 
                     <div class="mt-6 flex flex-col sm:flex-row gap-3">
-                        <a href="{{ route('catalog.schools') }}" class="text-center py-3 px-6 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition">
+                        <a href="{{ route('catalog.index') }}" class="text-center py-3 px-6 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition">
                             Continuer mes achats
                         </a>
                         <a href="{{ route('checkout.index') }}" class="btn-primary text-center flex-1 !py-3">
@@ -103,7 +103,7 @@
                     <div class="text-5xl mb-4"><x-icon name="backpack" class="w-12 h-12 mx-auto text-gray-300" /></div>
                     <h2 class="text-xl font-semibold text-gray-700">Votre panier est vide</h2>
                     <p class="text-gray-400 mt-2">Parcourez le catalogue pour trouver vos livres scolaires.</p>
-                    <a href="{{ route('catalog.schools') }}" class="btn-primary mt-6 inline-block !py-3 !px-8">
+                    <a href="{{ route('catalog.index') }}" class="btn-primary mt-6 inline-block !py-3 !px-8">
                         Voir le catalogue
                     </a>
                 </div>

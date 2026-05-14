@@ -7,7 +7,7 @@
             title="Catégories"
             subtitle="Parcourez les livres par matière"
             link-text="Tout parcourir"
-            link-url="{{ route('catalog.schools') }}"
+            link-url="{{ route('catalog.index') }}"
         />
 
         <div class="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide snap-x snap-mandatory">

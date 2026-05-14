@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Notifications\BuybackResponseNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class SellerBookController extends Controller
@@ -52,13 +53,17 @@ class SellerBookController extends Controller
         }
 
         SellerBook::create([
-            'user_id' => auth()->id(),
+            'user_id'          => auth()->id(),
             'official_book_id' => $validated['official_book_id'],
-            'condition' => $validated['condition'],
-            'price' => $validated['price'],
-            'quantity' => $validated['quantity'],
-            'images' => $images ?: null,
-            'status' => BookStatus::Pending->value,
+            'author'           => $validated['author'] ?? null,
+            'isbn'             => $validated['isbn'] ?? null,
+            'publisher'        => $validated['publisher'] ?? null,
+            'condition'        => $validated['condition'],
+            'price'            => $validated['price'],
+            'quantity'         => $validated['quantity'],
+            'purchase_price'   => $validated['purchase_price'] ?? null,
+            'images'           => $images ?: null,
+            'status'           => BookStatus::Pending->value,
         ]);
 
         return redirect()->route('seller.books.index')
@@ -87,7 +92,19 @@ class SellerBookController extends Controller
 
         $validated = $request->validated();
 
-        $images = $book->images ?? [];
+        // Keep only the existing images the seller chose not to remove
+        $keptImages = array_values(array_intersect(
+            $request->input('keep_images', []),
+            $book->images ?? []
+        ));
+
+        // Delete images that were explicitly removed
+        foreach (array_diff($book->images ?? [], $keptImages) as $path) {
+            Storage::disk('public')->delete($path);
+        }
+
+        // Append newly uploaded images
+        $images = $keptImages;
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $images[] = $image->store('seller-books', 'public');
@@ -96,11 +113,15 @@ class SellerBookController extends Controller
 
         $book->update([
             'official_book_id' => $validated['official_book_id'],
-            'condition' => $validated['condition'],
-            'price' => $validated['price'],
-            'quantity' => $validated['quantity'],
-            'images' => $images ?: null,
-            'status' => BookStatus::Pending->value, // Re-submit for review
+            'author'           => $validated['author'] ?? null,
+            'isbn'             => $validated['isbn'] ?? null,
+            'publisher'        => $validated['publisher'] ?? null,
+            'condition'        => $validated['condition'],
+            'price'            => $validated['price'],
+            'quantity'         => $validated['quantity'],
+            'purchase_price'   => $validated['purchase_price'] ?? null,
+            'images'           => $images ?: null,
+            'status'           => BookStatus::Pending->value,
             'rejection_reason' => null,
         ]);
 

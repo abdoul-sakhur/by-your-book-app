@@ -50,7 +50,7 @@
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
                     <p class="text-lg text-gray-400">Vous n'avez aucun favori pour le moment.</p>
                     <p class="text-sm text-gray-300 mt-2">Parcourez le catalogue et ajoutez des livres à vos favoris.</p>
-                    <a href="{{ route('catalog.schools') }}" class="inline-block mt-6 btn-primary">Parcourir le catalogue</a>
+                    <a href="{{ route('catalog.index') }}" class="inline-block mt-6 btn-primary">Parcourir le catalogue</a>
                 </div>
             @endif
         </div>

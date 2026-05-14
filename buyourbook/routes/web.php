@@ -55,7 +55,8 @@ Route::get('/confidentialite', [PageController::class, 'privacy'])->name('pages.
 Route::get('/mentions-legales', [PageController::class, 'legal'])->name('pages.legal');
 
 // --- Catalogue public ---
-Route::get('/catalogue', [CatalogController::class, 'schools'])->name('catalog.schools');
+Route::get('/catalogue', [CatalogController::class, 'index'])->name('catalog.index');
+Route::get('/catalogue/ecoles', [CatalogController::class, 'schools'])->name('catalog.schools');
 Route::get('/catalogue/recherche', [CatalogController::class, 'search'])->name('catalog.search');
 Route::get('/catalogue/{school}/{grade}', [CatalogController::class, 'grade'])->name('catalog.grade');
 Route::get('/livre/{officialBook}', [CatalogController::class, 'book'])->name('catalog.book');

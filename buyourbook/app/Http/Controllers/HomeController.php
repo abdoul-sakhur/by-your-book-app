@@ -65,7 +65,7 @@ class HomeController extends Controller
                 'description' => 'Trouvez tous les manuels scolaires de votre école au meilleur prix.',
                 'image' => null,
                 'cta_text' => 'Voir le catalogue',
-                'cta_link' => route('catalog.schools'),
+                'cta_link' => route('catalog.index'),
                 'bg_color' => 'from-blue-700 to-indigo-600',
             ],
             (object) [
@@ -83,7 +83,7 @@ class HomeController extends Controller
             'text' => 'Assurez l\'avenir scolaire de vos enfants',
             'subtext' => 'Livres vérifiés, prix imbattables, livraison en point relais à Abidjan.',
             'cta_text' => 'Découvrir le catalogue',
-            'cta_link' => route('catalog.schools'),
+            'cta_link' => route('catalog.index'),
         ];
 
         // Catégories (matières principales)

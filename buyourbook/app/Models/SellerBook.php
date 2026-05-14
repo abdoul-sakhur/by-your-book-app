@@ -16,6 +16,9 @@ class SellerBook extends Model
     protected $fillable = [
         'user_id',
         'official_book_id',
+        'author',
+        'isbn',
+        'publisher',
         'condition',
         'price',
         'quantity',

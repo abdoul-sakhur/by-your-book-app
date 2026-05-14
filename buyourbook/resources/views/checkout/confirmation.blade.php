@@ -127,7 +127,7 @@
             {{-- Actions --}}
             <div class="flex flex-col sm:flex-row gap-3">
                 <a href="{{ route('orders.show', $order) }}" class="btn-primary text-center">Voir ma commande</a>
-                <a href="{{ route('catalog.schools') }}" class="text-center px-6 py-3 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition font-medium">Continuer mes achats</a>
+                <a href="{{ route('catalog.index') }}" class="text-center px-6 py-3 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition font-medium">Continuer mes achats</a>
             </div>
 
         </div>

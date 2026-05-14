@@ -84,7 +84,7 @@
             <div class="rounded-2xl p-8 text-center text-white" style="background: linear-gradient(135deg, var(--color-primary) 0%, #2d6a4f 100%);">
                 <h3 class="text-xl font-bold">Prêt à commencer ?</h3>
                 <div class="mt-4 flex flex-col sm:flex-row gap-3 justify-center">
-                    <a href="{{ route('catalog.schools') }}" class="inline-flex items-center justify-center px-6 py-3 font-semibold rounded-lg text-white" style="background-color: var(--color-secondary);">
+                    <a href="{{ route('catalog.index') }}" class="inline-flex items-center justify-center px-6 py-3 font-semibold rounded-lg text-white" style="background-color: var(--color-secondary);">
                         <x-icon name="reader" class="w-5 h-5 inline" /> Acheter des livres
                     </a>
                     <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-6 py-3 font-semibold rounded-lg bg-white" style="color: var(--color-primary);">

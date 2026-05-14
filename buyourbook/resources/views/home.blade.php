@@ -13,7 +13,7 @@
                 </p>
 
                 <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="{{ route('catalog.schools') }}"
+                    <a href="{{ route('catalog.index') }}"
                        class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-lg text-white shadow-lg hover:shadow-xl transition"
                        style="background-color: var(--color-secondary);">
                         <x-icon name="reader" class="w-5 h-5 inline" /> Acheter mes livres
@@ -100,7 +100,7 @@
 
             <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
                 @forelse($schools as $school)
-                    <a href="{{ $school->grades->first() ? route('catalog.grade', [$school, $school->grades->first()]) : route('catalog.schools') }}"
+                    <a href="{{ $school->grades->first() ? route('catalog.grade', [$school, $school->grades->first()]) : route('catalog.index') }}"
                        class="border border-gray-200 rounded-lg p-5 text-center hover:shadow-md hover:border-[var(--color-primary)] transition group">
                         @if($school->logo)
                             <img src="{{ Storage::url($school->logo) }}" alt="{{ $school->name }}" class="w-12 h-12 mx-auto rounded-full object-cover mb-3">
@@ -122,7 +122,7 @@
 
             @if($schools->count() > 0)
                 <div class="mt-6 text-center">
-                    <a href="{{ route('catalog.schools') }}" class="text-sm font-medium hover:underline" style="color: var(--color-primary);">
+                    <a href="{{ route('catalog.index') }}" class="text-sm font-medium hover:underline" style="color: var(--color-primary);">
                         Voir toutes les écoles →
                     </a>
                 </div>

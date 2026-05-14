@@ -18,7 +18,7 @@
                         Accueil
                     </a>
 
-                    <a href="{{ route('catalog.schools') }}"
+                    <a href="{{ route('catalog.index') }}"
                        class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2 {{ request()->routeIs('catalog.*') ? 'border-[var(--color-primary)] text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                         Catalogue
                     </a>
@@ -111,7 +111,7 @@
 
         <div class="py-3 space-y-1">
             <a href="{{ route('home') }}" class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50">Accueil</a>
-            <a href="{{ route('catalog.schools') }}" class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50">Catalogue</a>
+            <a href="{{ route('catalog.index') }}" class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50">Catalogue</a>
             <a href="{{ route('cart.index') }}" class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50">Mon panier</a>
 
             @auth

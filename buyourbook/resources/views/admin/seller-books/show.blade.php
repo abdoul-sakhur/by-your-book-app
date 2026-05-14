@@ -57,6 +57,24 @@
                         <p class="text-gray-500">Quantité</p>
                         <p class="font-medium text-gray-900">{{ $sellerBook->quantity }}</p>
                     </div>
+                    @if($sellerBook->author)
+                    <div>
+                        <p class="text-gray-500">Auteur</p>
+                        <p class="font-medium text-gray-900">{{ $sellerBook->author }}</p>
+                    </div>
+                    @endif
+                    @if($sellerBook->isbn)
+                    <div>
+                        <p class="text-gray-500">ISBN</p>
+                        <p class="font-medium text-gray-900">{{ $sellerBook->isbn }}</p>
+                    </div>
+                    @endif
+                    @if($sellerBook->publisher)
+                    <div>
+                        <p class="text-gray-500">Éditeur</p>
+                        <p class="font-medium text-gray-900">{{ $sellerBook->publisher }}</p>
+                    </div>
+                    @endif
                     <div>
                         <p class="text-gray-500">Statut actuel</p>
                         <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-{{ $sellerBook->status->color() }}-100 text-{{ $sellerBook->status->color() }}-800">

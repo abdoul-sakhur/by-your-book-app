@@ -7,7 +7,7 @@
             title="Livres populaires"
             subtitle="Les manuels les plus demandés par les élèves"
             link-text="Voir tout"
-            link-url="{{ route('catalog.schools') }}"
+            link-url="{{ route('catalog.index') }}"
         />
 
         @if($books->count() > 0)
@@ -19,7 +19,7 @@
 
             {{-- Mobile "Voir tout" link --}}
             <div class="mt-6 text-center sm:hidden">
-                <a href="{{ route('catalog.schools') }}"
+                <a href="{{ route('catalog.index') }}"
                    class="inline-flex items-center gap-1 text-sm font-medium hover:underline"
                    style="color: var(--color-primary);">
                     Voir tous les livres

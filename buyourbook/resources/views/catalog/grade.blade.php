@@ -6,7 +6,7 @@
 
             {{-- Breadcrumb --}}
             <nav class="text-sm text-gray-500 mb-6">
-                <a href="{{ route('catalog.schools') }}" class="hover:text-gray-700">Catalogue</a>
+                <a href="{{ route('catalog.index') }}" class="hover:text-gray-700">Catalogue</a>
                 <span class="mx-2">›</span>
                 <span class="text-gray-900 font-medium">{{ $school->name }}</span>
                 <span class="mx-2">›</span>

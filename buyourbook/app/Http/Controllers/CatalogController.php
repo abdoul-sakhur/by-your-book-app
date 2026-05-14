@@ -14,6 +14,78 @@ use Illuminate\View\View;
 class CatalogController extends Controller
 {
     /**
+     * Catalogue principal — tous les livres disponibles, avec filtres.
+     */
+    public function index(Request $request): View
+    {
+        $q        = $request->input('q', '');
+        $city     = $request->input('city', '');
+        $schoolId = $request->input('school', '');
+        $gradeId  = $request->input('grade', '');
+        $subjectId = $request->input('subject', '');
+        $condition = $request->input('condition', '');
+        $priceMin  = $request->input('price_min', '');
+        $priceMax  = $request->input('price_max', '');
+        $sort      = $request->input('sort', 'newest');
+
+        $books = OfficialBook::query()
+            ->where('is_active', true)
+            ->whereHas('sellerBooks', fn ($sq) => $sq->approved()->where('quantity', '>', 0))
+            ->with(['subject', 'grade.school'])
+            ->withCount(['sellerBooks' => fn ($sq) => $sq->approved()->where('quantity', '>', 0)])
+            ->withMin(['sellerBooks' => fn ($sq) => $sq->approved()->where('quantity', '>', 0)], 'price')
+            ->addSelect([
+                'cheapest_seller_book_id' => SellerBook::select('id')
+                    ->whereColumn('official_book_id', 'official_books.id')
+                    ->approved()
+                    ->where('quantity', '>', 0)
+                    ->orderBy('price')
+                    ->limit(1),
+            ])
+            ->when($q, fn ($sq) => $sq->where(fn ($inner) => $inner
+                ->where('title', 'like', "%{$q}%")
+                ->orWhere('author', 'like', "%{$q}%")
+                ->orWhereHas('subject', fn ($s) => $s->where('name', 'like', "%{$q}%"))
+            ))
+            ->when($city, fn ($sq) => $sq->whereHas('grade.school', fn ($s) => $s->where('city', $city)))
+            ->when($schoolId, fn ($sq) => $sq->whereHas('grade', fn ($g) => $g->where('school_id', $schoolId)))
+            ->when($gradeId, fn ($sq) => $sq->where('grade_id', $gradeId))
+            ->when($subjectId, fn ($sq) => $sq->where('subject_id', $subjectId))
+            ->when($condition, fn ($sq) => $sq->whereHas('sellerBooks', fn ($sb) =>
+                $sb->approved()->where('quantity', '>', 0)->where('condition', $condition)
+            ))
+            ->when($priceMin, fn ($sq) => $sq->whereHas('sellerBooks', fn ($sb) =>
+                $sb->approved()->where('quantity', '>', 0)->where('price', '>=', (int) $priceMin)
+            ))
+            ->when($priceMax, fn ($sq) => $sq->whereHas('sellerBooks', fn ($sb) =>
+                $sb->approved()->where('quantity', '>', 0)->where('price', '<=', (int) $priceMax)
+            ));
+
+        $books = match ($sort) {
+            'price_asc'  => $books->orderByRaw("(SELECT MIN(price) FROM seller_books WHERE official_book_id = official_books.id AND status = 'approved' AND quantity > 0) ASC"),
+            'price_desc' => $books->orderByRaw("(SELECT MIN(price) FROM seller_books WHERE official_book_id = official_books.id AND status = 'approved' AND quantity > 0) DESC"),
+            'title'      => $books->orderBy('title'),
+            default      => $books->latest(),
+        };
+
+        $books = $books->paginate(24)->withQueryString();
+
+        $cities   = School::active()->distinct()->orderBy('city')->pluck('city');
+        $schools  = School::active()->orderBy('name')->get(['id', 'name', 'city']);
+        $grades   = $schoolId
+            ? Grade::where('school_id', $schoolId)->orderBy('name')->get(['id', 'name'])
+            : collect();
+        $subjects   = Subject::orderBy('name')->get();
+        $conditions = BookCondition::cases();
+
+        return view('catalog.index', compact(
+            'books', 'q', 'city', 'schoolId', 'gradeId', 'subjectId',
+            'condition', 'priceMin', 'priceMax', 'sort',
+            'cities', 'schools', 'grades', 'subjects', 'conditions'
+        ));
+    }
+
+    /**
      * Recherche dans le catalogue.
      */
     public function search(Request $request): View

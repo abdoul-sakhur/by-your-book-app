@@ -51,7 +51,7 @@
                     <x-icon name="archive" class="w-12 h-12 text-gray-300 mx-auto mb-4" />
                     <h2 class="text-xl font-semibold text-gray-700">Aucune commande</h2>
                     <p class="text-gray-400 mt-2">Vous n'avez pas encore passé de commande.</p>
-                    <a href="{{ route('catalog.schools') }}" class="btn-primary mt-6 inline-block !py-3 !px-8">
+                    <a href="{{ route('catalog.index') }}" class="btn-primary mt-6 inline-block !py-3 !px-8">
                         Voir le catalogue
                     </a>
                 </div>
