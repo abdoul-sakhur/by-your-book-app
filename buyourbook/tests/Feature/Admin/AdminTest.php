@@ -230,9 +230,7 @@ class AdminTest extends TestCase
         ]);
 
         $this->actingAs($this->admin)
-            ->patch("/admin/orders/{$order->id}/status", [
-                'status' => 'confirmed',
-            ])
+            ->post("/admin/orders/{$order->id}/confirmer")
             ->assertRedirect();
 
         $order->refresh();

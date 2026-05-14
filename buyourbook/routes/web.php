@@ -84,6 +84,7 @@ Route::middleware('auth')->group(function () {
     // Commandes acheteur
     Route::get('/mes-commandes', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/mes-commandes/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('/mes-commandes/{order}/annuler', [OrderController::class, 'cancel'])->name('orders.cancel');
     Route::get('/mes-commandes/{order}/facture', [InvoiceController::class, 'download'])->name('orders.invoice');
 
     // Favoris / Wishlist
@@ -195,10 +196,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         return response()->json($grades);
     })->name('api.grades');
 
-    // Commandes admin
+    // Commandes admin — workflow
     Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
-    Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::post('orders/{order}/confirmer', [AdminOrderController::class, 'confirm'])->name('orders.confirm');
+    Route::post('orders/{order}/en-preparation', [AdminOrderController::class, 'markPreparing'])->name('orders.mark-preparing');
+    Route::post('orders/{order}/pret', [AdminOrderController::class, 'markReady'])->name('orders.mark-ready');
+    Route::post('orders/{order}/livre', [AdminOrderController::class, 'markDelivered'])->name('orders.mark-delivered');
+    Route::post('orders/{order}/annuler', [AdminOrderController::class, 'cancel'])->name('orders.cancel');
+    Route::post('orders/{order}/items/{item}/vendeur-paye', [AdminOrderController::class, 'markSellerPaid'])->name('orders.mark-seller-paid');
 
     // Utilisateurs admin
     Route::get('users', [UserController::class, 'index'])->name('users.index');
@@ -236,6 +242,7 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->g
     // Commandes (ventes du vendeur)
     Route::get('orders', [SellerOrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [SellerOrderController::class, 'show'])->name('orders.show');
+    Route::post('orders/{order}/items/{item}/pret', [SellerOrderController::class, 'markItemReady'])->name('orders.items.mark-ready');
 
     // API interne — classes par école (pour select dynamique Alpine.js — vendeur)
     Route::get('api/grades', function () {

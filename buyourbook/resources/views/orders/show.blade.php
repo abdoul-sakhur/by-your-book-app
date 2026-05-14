@@ -20,6 +20,32 @@
                 </div>
             </div>
 
+            @if(session('success'))
+                <div class="mb-4 rounded-lg bg-green-50 border border-green-200 p-4 text-sm text-green-800">{{ session('success') }}</div>
+            @endif
+
+            {{-- Paiement confirmé --}}
+            @if($order->isPaid())
+                <div class="mb-4 rounded-lg bg-green-50 border border-green-200 p-4 text-sm text-green-800 flex items-center gap-2">
+                    <x-icon name="check-circled" class="w-5 h-5 text-green-600" />
+                    Paiement à la livraison confirmé le {{ $order->payment_received_at->format('d/m/Y à H:i') }}
+                </div>
+            @endif
+
+            {{-- Annulation (uniquement si en attente) --}}
+            @if($order->canBeCancelledByBuyer())
+                <div class="mb-6 rounded-lg bg-red-50 border border-red-200 p-4 flex items-center justify-between">
+                    <p class="text-sm text-red-800">Vous pouvez encore annuler cette commande tant qu'elle n'est pas confirmée.</p>
+                    <form action="{{ route('orders.cancel', $order) }}" method="POST"
+                          onsubmit="return confirm('Confirmer l\'annulation de cette commande ?')">
+                        @csrf
+                        <button class="ml-4 text-sm px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                            Annuler la commande
+                        </button>
+                    </form>
+                </div>
+            @endif
+
             {{-- Infos commande --}}
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">

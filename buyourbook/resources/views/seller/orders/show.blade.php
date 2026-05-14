@@ -63,6 +63,7 @@
                             <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Qté</th>
                             <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">P.U.</th>
                             <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Sous-total</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Prêt</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
@@ -76,12 +77,29 @@
                                 <td class="px-4 py-3 text-sm text-center text-gray-700">{{ $item->quantity }}</td>
                                 <td class="px-4 py-3 text-sm text-right text-gray-700">{{ number_format($item->unit_price, 0, ',', ' ') }} FCFA</td>
                                 <td class="px-4 py-3 text-sm text-right font-medium text-gray-900">{{ number_format($item->subtotal, 0, ',', ' ') }} FCFA</td>
+                                <td class="px-4 py-3 text-center">
+                                    @if($item->seller_ready)
+                                        <span class="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-100 px-2 py-0.5 rounded-full">
+                                            ✓ Prêt
+                                            <span class="text-gray-400 font-normal">{{ $item->seller_ready_at?->format('d/m') }}</span>
+                                        </span>
+                                    @elseif($order->status === \App\Enums\OrderStatus::Confirmed)
+                                        <form action="{{ route('seller.orders.items.mark-ready', [$order, $item]) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="text-xs px-3 py-1 bg-green-600 text-white rounded-full hover:bg-green-700 transition">
+                                                Marquer prêt
+                                            </button>
+                                        </form>
+                                    @else
+                                        <span class="text-xs text-gray-400">—</span>
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
                     <tfoot>
                         <tr class="bg-gray-50">
-                            <td colspan="4" class="px-4 py-3 text-sm font-semibold text-gray-700 text-right">Mon total :</td>
+                            <td colspan="5" class="px-4 py-3 text-sm font-semibold text-gray-700 text-right">Mon total :</td>
                             <td class="px-4 py-3 text-sm font-bold text-right" style="color: var(--color-primary);">{{ number_format($sellerTotal, 0, ',', ' ') }} FCFA</td>
                         </tr>
                     </tfoot>
@@ -91,3 +109,4 @@
         </div>
     </div>
 </x-app-layout>
+

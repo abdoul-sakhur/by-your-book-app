@@ -343,9 +343,7 @@ class PurchaseWorkflowTest extends TestCase
 
         // 9a. Admin confirme la commande
         $this->actingAs($this->admin)
-            ->patch(route('admin.orders.update-status', $order), [
-                'status' => 'confirmed',
-            ])
+            ->post(route('admin.orders.confirm', $order))
             ->assertRedirect(route('admin.orders.show', $order));
 
         $order->refresh();
@@ -361,19 +359,13 @@ class PurchaseWorkflowTest extends TestCase
         Notification::fake();
 
         $this->actingAs($this->admin)
-            ->patch(route('admin.orders.update-status', $order), [
-                'status' => 'preparing',
-            ]);
+            ->post(route('admin.orders.mark-preparing', $order));
 
         $this->actingAs($this->admin)
-            ->patch(route('admin.orders.update-status', $order), [
-                'status' => 'ready',
-            ]);
+            ->post(route('admin.orders.mark-ready', $order));
 
         $this->actingAs($this->admin)
-            ->patch(route('admin.orders.update-status', $order), [
-                'status' => 'delivered',
-            ]);
+            ->post(route('admin.orders.mark-delivered', $order));
 
         $order->refresh();
         $this->assertEquals(OrderStatus::Delivered, $order->status);
@@ -512,12 +504,13 @@ class PurchaseWorkflowTest extends TestCase
         // --- Admin met le statut à confirmed → preparing → ready → delivered ---
         Notification::fake();
 
-        foreach (['confirmed', 'preparing', 'ready', 'delivered'] as $status) {
-            $this->actingAs($this->admin)
-                ->patch(route('admin.orders.update-status', $order), [
-                    'status' => $status,
-                ]);
-        }
+        $this->actingAs($this->admin)->post(route('admin.orders.confirm', $order));
+        $order->refresh();
+        $this->actingAs($this->admin)->post(route('admin.orders.mark-preparing', $order));
+        $order->refresh();
+        $this->actingAs($this->admin)->post(route('admin.orders.mark-ready', $order));
+        $order->refresh();
+        $this->actingAs($this->admin)->post(route('admin.orders.mark-delivered', $order));
 
         $order->refresh();
         $this->assertEquals(OrderStatus::Delivered, $order->status);

@@ -19,6 +19,7 @@ class Order extends Model
         'total_amount',
         'delivery_fee',
         'payment_method',
+        'payment_received_at',
         'delivery_address',
         'delivery_phone',
         'delivery_notes',
@@ -27,10 +28,31 @@ class Order extends Model
     protected function casts(): array
     {
         return [
-            'status' => OrderStatus::class,
-            'total_amount' => 'integer',
-            'delivery_fee' => 'integer',
+            'status'               => OrderStatus::class,
+            'total_amount'         => 'integer',
+            'delivery_fee'         => 'integer',
+            'payment_received_at'  => 'datetime',
         ];
+    }
+
+    // --- Helpers workflow ---
+
+    public function isPaid(): bool
+    {
+        return $this->payment_received_at !== null;
+    }
+
+    public function canBeCancelledByBuyer(): bool
+    {
+        return $this->status === OrderStatus::Pending;
+    }
+
+    /**
+     * Tous les items de la commande sont-ils marqués prêts par leur vendeur ?
+     */
+    public function allItemsReadyBySeller(): bool
+    {
+        return $this->items->every(fn ($item) => $item->seller_ready);
     }
 
     // --- Relations ---
