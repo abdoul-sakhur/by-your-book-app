@@ -63,7 +63,11 @@ COPY --from=frontend --chown=www-data:www-data /app/public/build ./public/build
 
 # Créer les dossiers nécessaires et le fichier SQLite
 RUN mkdir -p \
-    storage/app/public \
+    storage/app/public/banners \
+    storage/app/public/books \
+    storage/app/public/sliders \
+    storage/app/public/popups \
+    storage/app/private \
     storage/framework/cache/data \
     storage/framework/sessions \
     storage/framework/views \
