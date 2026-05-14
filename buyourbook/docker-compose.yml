@@ -1,0 +1,36 @@
+# =============================================================================
+# BuyOurBook — Déploiement Docker standalone
+# Usage :
+#   1. Copier .env.docker en .env et remplir les valeurs
+#   2. docker compose up -d --build
+# =============================================================================
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: buyourbook:latest
+    container_name: buyourbook
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    env_file:
+      - .env
+    volumes:
+      # Uploads utilisateurs (images livres, bannières…) — persisté entre les redéploiements
+      - storage_uploads:/var/www/html/storage/app
+      # Base de données SQLite — persistée entre les redéploiements
+      - db_data:/var/www/html/database
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/up"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+volumes:
+  storage_uploads:
+    driver: local
+  db_data:
+    driver: local

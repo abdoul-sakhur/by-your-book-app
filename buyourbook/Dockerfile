@@ -80,8 +80,8 @@ RUN mkdir -p \
 # Configuration Nginx personnalisée
 COPY docker/nginx.conf /etc/nginx/site-opts.d/buyourbook.conf
 
-# Copier le script de déploiement
-COPY --chmod=755 docker/deploy.sh /var/www/html/docker/deploy.sh
+# Script d'init : exécuté automatiquement au démarrage du conteneur (serversideup cont-init.d)
+COPY --chmod=755 docker/deploy.sh /etc/cont-init.d/10-app-setup
 
 # Supprimer les vues compilées (seront régénérées au runtime)
 RUN rm -rf /var/www/html/storage/framework/views/*

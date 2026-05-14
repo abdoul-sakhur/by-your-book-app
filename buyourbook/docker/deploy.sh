@@ -1,7 +1,7 @@
 #!/bin/bash
 # =============================================================================
-# BuyOurBook — Script de post-déploiement pour Coolify
-# Exécuté automatiquement après chaque déploiement
+# BuyOurBook — Script d'initialisation du conteneur
+# Exécuté automatiquement au démarrage du conteneur (via cont-init.d)
 # =============================================================================
 
 set -e
