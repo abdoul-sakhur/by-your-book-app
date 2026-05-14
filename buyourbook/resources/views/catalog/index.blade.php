@@ -213,7 +213,7 @@
 
                 @if($books->count() > 0)
                     {{-- Grille produits --}}
-                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-7">
                         @foreach($books as $book)
                         <div class="group flex flex-col">
 
