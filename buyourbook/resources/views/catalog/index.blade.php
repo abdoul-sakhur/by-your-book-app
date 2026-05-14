@@ -213,63 +213,65 @@
 
                 @if($books->count() > 0)
                     {{-- Grille produits --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
                         @foreach($books as $book)
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col overflow-hidden">
+                        <div class="group flex flex-col">
 
-                            {{-- Couverture --}}
-                            <a href="{{ route('catalog.book', $book) }}" class="block relative bg-gray-100 overflow-hidden flex-shrink-0" style="height:176px;">
+                            {{-- Couverture — ratio portrait 2:3 --}}
+                            <a href="{{ route('catalog.book', $book) }}"
+                               class="block relative overflow-hidden rounded-xl shadow-sm group-hover:shadow-lg transition-shadow duration-300"
+                               style="aspect-ratio:2/3;">
+                                {{-- Skeleton --}}
+                                <div class="absolute inset-0 bg-gray-200 animate-pulse rounded-xl"></div>
+
                                 @if($book->cover_image)
-                                    {{-- Skeleton visible tant que l'image charge --}}
-                                    <div class="absolute inset-0 bg-gray-200 animate-pulse"></div>
                                     <img src="{{ Storage::url($book->cover_image) }}" alt="{{ $book->title }}"
-                                         class="absolute inset-0 w-full h-full object-cover"
-                                         style="opacity:0; transition:opacity .25s"
+                                         class="absolute inset-0 w-full h-full object-cover rounded-xl"
+                                         style="opacity:0; transition:opacity .3s"
                                          onload="this.style.opacity=1; this.previousElementSibling.style.display='none';"
-                                         onerror="this.style.display='none'; var sk=this.previousElementSibling; sk.classList.remove('animate-pulse'); sk.innerHTML='<div class=\'h-full flex items-center justify-center\'><svg class=\'w-14 h-14\' style=\'color:#d1d5db\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253\'/></svg></div>';">
+                                         onerror="this.style.display='none'; var sk=this.previousElementSibling; sk.classList.remove('animate-pulse'); sk.style.background='#f3f4f6'; sk.innerHTML='<div style=\'height:100%;display:flex;align-items:center;justify-content:center\'><svg style=\'width:3rem;height:3rem;color:#d1d5db\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253\'/></svg></div>';">
                                 @else
-                                    <div class="absolute inset-0 flex items-center justify-center bg-gray-50">
-                                        <x-icon name="reader" class="w-14 h-14 text-gray-300" />
+                                    <div class="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-xl">
+                                        <x-icon name="reader" class="w-12 h-12 text-gray-300" />
                                     </div>
                                 @endif
-                                {{-- Badge offres --}}
-                                <span class="absolute top-2 right-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-white/90 shadow text-gray-700 z-10">
-                                    {{ $book->seller_books_count }} offre{{ $book->seller_books_count > 1 ? 's' : '' }}
+
+                                {{-- Badge nb offres — cercle coloré style bestseller --}}
+                                <span class="absolute top-2 left-2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shadow z-10"
+                                      style="background: var(--color-primary);">
+                                    {{ $book->seller_books_count }}
                                 </span>
-                            </a>
 
-                            {{-- Infos --}}
-                            <div class="p-4 flex flex-col flex-1">
-                                <a href="{{ route('catalog.book', $book) }}"
-                                   class="font-semibold text-gray-900 text-sm leading-tight hover:text-[var(--color-primary)] line-clamp-2 mb-1">
-                                    {{ $book->title }}
-                                </a>
-                                <p class="text-xs text-gray-500 mb-1">{{ $book->subject->name ?? '' }}</p>
-                                @if($book->grade)
-                                    <p class="text-xs text-gray-400 line-clamp-1">
-                                        {{ $book->grade->school->name ?? '' }} — {{ $book->grade->name }}
-                                    </p>
-                                @endif
-
-                                <div class="mt-auto pt-3 flex items-end justify-between gap-2">
-                                    <div>
-                                        <p class="text-xs text-gray-400">à partir de</p>
-                                        <p class="text-lg font-bold leading-tight" style="color: var(--color-primary);">
-                                            {{ number_format($book->seller_books_min_price, 0, ',', ' ') }} F
-                                        </p>
-                                    </div>
-                                    @if($book->cheapest_seller_book_id)
-                                    <form action="{{ route('cart.add') }}" method="POST" class="flex-shrink-0">
+                                {{-- Overlay hover avec bouton panier --}}
+                                @if($book->cheapest_seller_book_id)
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end p-3 z-10 rounded-xl">
+                                    <form action="{{ route('cart.add') }}" method="POST" class="w-full">
                                         @csrf
                                         <input type="hidden" name="seller_book_id" value="{{ $book->cheapest_seller_book_id }}">
                                         <input type="hidden" name="quantity" value="1">
                                         <button type="submit"
-                                                class="inline-flex items-center gap-1 btn-primary !py-2 !px-3 text-xs">
-                                            <x-icon name="backpack" class="w-3.5 h-3.5" /> Ajouter
+                                                class="w-full inline-flex items-center justify-center gap-1.5 bg-white text-gray-900 font-semibold text-xs py-2 rounded-lg hover:bg-gray-100 transition-colors">
+                                            <x-icon name="backpack" class="w-3.5 h-3.5" /> Ajouter au panier
                                         </button>
                                     </form>
-                                    @endif
                                 </div>
+                                @endif
+                            </a>
+
+                            {{-- Infos sous la couverture --}}
+                            <div class="mt-2.5 px-0.5">
+                                <a href="{{ route('catalog.book', $book) }}"
+                                   class="block font-semibold text-gray-900 text-sm leading-snug hover:text-[var(--color-primary)] line-clamp-2 text-center">
+                                    {{ $book->title }}
+                                </a>
+                                @if($book->subject || $book->grade)
+                                <p class="text-xs text-gray-400 text-center mt-0.5 line-clamp-1">
+                                    {{ $book->subject->name ?? '' }}{{ ($book->subject && $book->grade) ? ' · ' : '' }}{{ $book->grade->name ?? '' }}
+                                </p>
+                                @endif
+                                <p class="text-sm font-bold text-center mt-1" style="color: var(--color-primary);">
+                                    {{ number_format($book->seller_books_min_price, 0, ',', ' ') }} F
+                                </p>
                             </div>
                         </div>
                         @endforeach
