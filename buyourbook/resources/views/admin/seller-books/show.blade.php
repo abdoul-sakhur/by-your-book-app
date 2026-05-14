@@ -109,14 +109,15 @@
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Décision</h3>
 
                     <div class="flex flex-col sm:flex-row gap-4">
-                        {{-- Approuver --}}
+                        {{-- Valider (→ pickup_pending) --}}
                         <form action="{{ route('admin.seller-books.approve', $sellerBook) }}" method="POST"
-                              onsubmit="return confirm('Approuver ce livre ?')" class="flex-1">
+                              onsubmit="return confirm('Valider ce livre et notifier le vendeur pour la collecte à domicile ?')" class="flex-1">
                             @csrf
                             <button type="submit"
                                     class="w-full px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition">
-                                <x-icon name="check" class="w-5 h-5 inline" /> Approuver
+                                <x-icon name="check" class="w-5 h-5 inline" /> Valider le livre
                             </button>
+                            <p class="text-xs text-gray-500 mt-1 text-center">Le vendeur sera notifié d'une collecte à domicile</p>
                         </form>
 
                         {{-- Refuser --}}
@@ -149,13 +150,86 @@
                         </div>
                     </div>
                 </div>
+
+            @elseif($sellerBook->status === \App\Enums\BookStatus::PickupPending)
+                {{-- ===== SECTION COLLECTE À DOMICILE ===== --}}
+                <div class="bg-blue-50 border border-blue-200 rounded-lg shadow-sm p-6">
+                    <div class="flex items-start gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                            <x-icon name="map-pin" class="w-5 h-5 text-blue-600" />
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-blue-900">Collecte à domicile en attente</h3>
+                            <p class="text-sm text-blue-700 mt-0.5">
+                                Le livre a été validé. Un livreur doit se rendre chez le vendeur pour récupérer le livre et collecter le paiement.
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Infos de contact du vendeur --}}
+                    <div class="bg-white rounded-lg p-4 mb-5 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                        <div>
+                            <p class="text-gray-500 text-xs font-medium uppercase">Vendeur</p>
+                            <p class="font-semibold text-gray-900 mt-0.5">{{ $sellerBook->seller->name }}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs font-medium uppercase">Téléphone</p>
+                            <p class="font-semibold text-gray-900 mt-0.5">
+                                @if($sellerBook->seller->phone)
+                                    <a href="tel:{{ $sellerBook->seller->phone }}" class="text-blue-600 hover:underline">{{ $sellerBook->seller->phone }}</a>
+                                @else
+                                    <span class="text-gray-400 italic">Non renseigné</span>
+                                @endif
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs font-medium uppercase">Email</p>
+                            <p class="font-semibold text-gray-900 mt-0.5">
+                                <a href="mailto:{{ $sellerBook->seller->email }}" class="text-blue-600 hover:underline text-xs">{{ $sellerBook->seller->email }}</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        {{-- Marquer collecté → approved --}}
+                        <form action="{{ route('admin.seller-books.mark-collected', $sellerBook) }}" method="POST"
+                              onsubmit="return confirm('Confirmer que le livre ET le paiement ont bien été collectés à domicile ?')" class="flex-1">
+                            @csrf
+                            <button type="submit"
+                                    class="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition">
+                                <x-icon name="check" class="w-5 h-5 inline" /> Collecte effectuée — Mettre en ligne
+                            </button>
+                            <p class="text-xs text-gray-500 mt-1 text-center">Le livre sera publié dans le catalogue et le vendeur notifié</p>
+                        </form>
+
+                        {{-- Refuser même depuis pickup_pending --}}
+                        <div x-data="{ showReject: false }" class="flex-1">
+                            <button @click="showReject = !showReject" type="button"
+                                    class="w-full px-6 py-3 bg-red-100 text-red-700 font-semibold rounded-lg hover:bg-red-200 transition">
+                                <x-icon name="cross-2" class="w-5 h-5 inline" /> Annuler et refuser
+                            </button>
+                            <form x-show="showReject" x-transition
+                                  action="{{ route('admin.seller-books.reject', $sellerBook) }}" method="POST" class="mt-4 space-y-3">
+                                @csrf
+                                <textarea name="rejection_reason" rows="3" required
+                                          class="w-full rounded-md border-gray-300 shadow-sm text-sm"
+                                          placeholder="Raison du refus (visible par le vendeur)…">{{ old('rejection_reason') }}</textarea>
+                                <input type="hidden" name="admin_notes" value="">
+                                <button type="submit" class="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700">
+                                    Confirmer l'annulation
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
             @else
-                {{-- Already decided --}}
+                {{-- Approved or Rejected — already decided --}}
                 <div class="bg-gray-50 rounded-lg shadow-sm p-6">
                     <p class="text-sm text-gray-600">
-                        Ce livre a déjà été
+                        Ce livre est
                         <strong class="text-{{ $sellerBook->status->color() }}-700">{{ strtolower($sellerBook->status->label()) }}</strong>
-                        le {{ $sellerBook->updated_at->format('d/m/Y à H:i') }}.
+                        depuis le {{ $sellerBook->updated_at->format('d/m/Y à H:i') }}.
                     </p>
                     @if($sellerBook->rejection_reason)
                         <p class="mt-2 text-sm text-red-600"><strong>Raison :</strong> {{ $sellerBook->rejection_reason }}</p>

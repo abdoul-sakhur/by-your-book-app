@@ -185,6 +185,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('seller-books/{sellerBook}', [SellerBookValidationController::class, 'show'])->name('seller-books.show');
     Route::post('seller-books/{sellerBook}/approve', [SellerBookValidationController::class, 'approve'])->name('seller-books.approve');
     Route::post('seller-books/{sellerBook}/reject', [SellerBookValidationController::class, 'reject'])->name('seller-books.reject');
+    Route::post('seller-books/{sellerBook}/mark-collected', [SellerBookValidationController::class, 'markCollected'])->name('seller-books.mark-collected');
     Route::post('seller-books/{sellerBook}/buyback-propose', [SellerBookValidationController::class, 'buybackPropose'])->name('seller-books.buyback-propose');
     Route::post('seller-books/{sellerBook}/mark-paid', [SellerBookValidationController::class, 'markPaid'])->name('seller-books.mark-paid');
 

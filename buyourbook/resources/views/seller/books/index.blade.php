@@ -14,6 +14,31 @@
                 </a>
             </div>
 
+            {{-- Alerte collecte à domicile --}}
+            @php $pickupBooks = $books->filter(fn($b) => $b->status === \App\Enums\BookStatus::PickupPending); @endphp
+            @if($pickupBooks->count() > 0)
+                <div class="mb-6 bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-blue-900 text-sm">
+                            Collecte à domicile prévue pour {{ $pickupBooks->count() > 1 ? $pickupBooks->count().' livres' : '1 livre' }}
+                        </p>
+                        <p class="text-blue-700 text-sm mt-0.5">
+                            Notre livreur passera bientôt à votre adresse pour récupérer
+                            @foreach($pickupBooks as $pb)
+                                <strong>« {{ $pb->officialBook->title }} »</strong>{{ !$loop->last ? ', ' : '' }}
+                            @endforeach
+                            et procéder au règlement. Assurez-vous d'être disponible.
+                        </p>
+                    </div>
+                </div>
+            @endif
+
             {{-- Filtres --}}
             <form method="GET" class="bg-white rounded-lg shadow-sm p-4 mb-6 flex flex-wrap gap-4 items-end">
                 <div class="flex-1 min-w-[200px]">
@@ -77,6 +102,11 @@
                                     <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-{{ $book->status->color() }}-100 text-{{ $book->status->color() }}-800">
                                         {{ $book->status->label() }}
                                     </span>
+                                    @if($book->status === \App\Enums\BookStatus::PickupPending)
+                                        <p class="text-xs text-blue-700 mt-1 leading-snug">
+                                            Notre équipe passera bientôt<br>récupérer le livre chez vous.
+                                        </p>
+                                    @endif
                                     @if($book->status === \App\Enums\BookStatus::Rejected && $book->rejection_reason)
                                         <p class="text-xs text-red-600 mt-1">{{ $book->rejection_reason }}</p>
                                     @endif
