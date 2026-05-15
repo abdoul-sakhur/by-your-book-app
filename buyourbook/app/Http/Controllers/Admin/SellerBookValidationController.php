@@ -122,4 +122,25 @@ class SellerBookValidationController extends Controller
         return redirect()->route('admin.seller-books.show', $sellerBook)
             ->with('success', 'Paiement du vendeur marqué comme effectué.');
     }
+
+    public function buybackAcceptDirect(SellerBook $sellerBook): RedirectResponse
+    {
+        abort_unless($sellerBook->status === BookStatus::Approved, 403);
+        abort_unless(
+            in_array($sellerBook->buyback_status, ['pending', 'negotiating']),
+            403,
+            'Cette action n\'est pas disponible pour ce statut de rachat.'
+        );
+
+        $sellerBook->update([
+            'buyback_price'  => $sellerBook->price,
+            'buyback_status' => 'accepted',
+        ]);
+
+        $sellerBook->load('officialBook');
+        $sellerBook->seller->notify(new BuybackOfferNotification($sellerBook));
+
+        return redirect()->route('admin.seller-books.show', $sellerBook)
+            ->with('success', 'Prix du vendeur accepté. Le vendeur a été notifié.');
+    }
 }

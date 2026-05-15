@@ -67,8 +67,9 @@
             @if($order->status === \App\Enums\OrderStatus::Pending)
                 <form action="{{ route('admin.orders.confirm', $order) }}" method="POST">
                     @csrf
-                    <button class="inline-flex items-center gap-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700">
-                        <x-icon name="check" class="w-4 h-4" /> Confirmer la commande
+                    <button style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.55rem 1.25rem;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border:none;border-radius:0.5rem;font-size:0.875rem;font-weight:600;cursor:pointer;box-shadow:0 2px 6px rgba(37,99,235,.4);transition:opacity .2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="width:1rem;height:1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        Confirmer la commande
                     </button>
                 </form>
             @endif
@@ -76,8 +77,9 @@
             @if($order->status === \App\Enums\OrderStatus::Confirmed)
                 <form action="{{ route('admin.orders.mark-preparing', $order) }}" method="POST">
                     @csrf
-                    <button class="inline-flex items-center gap-1 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700">
-                        <x-icon name="timer" class="w-4 h-4" /> Marquer en préparation
+                    <button style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.55rem 1.25rem;background:linear-gradient(135deg,#4f46e5,#3730a3);color:#fff;border:none;border-radius:0.5rem;font-size:0.875rem;font-weight:600;cursor:pointer;box-shadow:0 2px 6px rgba(79,70,229,.4);transition:opacity .2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="width:1rem;height:1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Marquer en préparation
                     </button>
                 </form>
             @endif
@@ -95,8 +97,9 @@
                 <form action="{{ route('admin.orders.mark-delivered', $order) }}" method="POST"
                       onsubmit="return confirm('Confirmer la livraison et l\'encaissement du paiement ?')">
                     @csrf
-                    <button class="inline-flex items-center gap-1 px-4 py-2 bg-gray-700 text-white text-sm font-medium rounded-lg hover:bg-gray-900">
-                        <x-icon name="check-circled" class="w-4 h-4" /> Livrée + Paiement reçu
+                    <button style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.55rem 1.25rem;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:none;border-radius:0.5rem;font-size:0.875rem;font-weight:600;cursor:pointer;box-shadow:0 2px 6px rgba(22,163,74,.4);transition:opacity .2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="width:1rem;height:1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Livrée + Paiement reçu
                     </button>
                 </form>
             @endif

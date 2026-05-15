@@ -226,7 +226,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     </button>
-                    <span class="absolute bottom-0 inset-x-0 bg-indigo-500/80 text-white text-center text-[10px] py-0.5" x-text="item.name.split('.')[0]"></span>
+                    <span style="position:absolute;bottom:0;left:0;right:0;background:rgba(99,102,241,.8);color:#fff;text-align:center;font-size:0.625rem;padding:0.125rem 0.25rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;" x-text="item.name.split('.')[0]"></span>
                 </div>
             </template>
 
@@ -236,15 +236,15 @@
                 <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
-                <span class="text-[10px] text-gray-400 mt-0.5">Ajouter</span>
-                <input type="file" accept="image/jpeg,image/png,image/webp" multiple class="hidden" @change="pickFiles($event)">
+                <span style="font-size:0.625rem;color:#9ca3af;margin-top:0.125rem;">Ajouter</span>
+                <input type="file" accept="image/jpeg,image/png,image/webp" multiple style="display:none" @change="pickFiles($event)">
             </label>
         </div>
 
         <p class="text-xs text-gray-400 mb-2">JPG, PNG ou WebP — 2 Mo max par photo</p>
 
         {{-- Input réel pour la soumission du formulaire (via DataTransfer) --}}
-        <input type="file" name="images[]" multiple x-ref="fileInput" class="hidden" accept="image/jpeg,image/png,image/webp">
+        <input type="file" name="images[]" multiple x-ref="fileInput" style="display:none" accept="image/jpeg,image/png,image/webp">
 
         {{-- Images existantes conservées --}}
         <template x-for="img in keptImages" :key="img">

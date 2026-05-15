@@ -137,6 +137,8 @@ class OrderController extends Controller
             'payment_received_at'  => now(),
         ]);
 
+        $order->items()->update(['seller_ready' => true]);
+
         OrderEvent::create([
             'order_id' => $order->id,
             'status'   => OrderStatus::Delivered,

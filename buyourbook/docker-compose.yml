@@ -1,11 +1,27 @@
 # =============================================================================
-# BuyOurBook — Déploiement Docker standalone
-# Usage :
-#   1. Copier .env.docker en .env et remplir les valeurs
-#   2. docker compose up -d --build
+# BuyOurBook — docker-compose.yml  (VPS Production — Hostinger)
+# =============================================================================
+#
+#  DÉPLOIEMENT INITIAL :
+#    1. Copier .env.production.example en .env  →  nano .env
+#    2. Remplir APP_KEY, MAIL_*, etc.
+#    3. docker compose up -d --build
+#
+#  REDÉPLOIEMENT (mise à jour) :
+#    git pull && docker compose up -d --build --remove-orphans
+#
+#  ARCHITECTURE :
+#    Internet :80 → [app] serversideup/php (Nginx + PHP-FPM) :8080
+#    SQLite   : volume db_data  → /var/www/html/database/database.sqlite
+#    Uploads  : volume uploads  → /var/www/html/storage/app
+#
 # =============================================================================
 
 services:
+
+  # ─────────────────────────────────────────────
+  # Application principale (PHP 8.4 + Nginx intégré)
+  # ─────────────────────────────────────────────
   app:
     build:
       context: .
@@ -13,24 +29,42 @@ services:
     image: buyourbook:latest
     container_name: buyourbook
     restart: unless-stopped
+
     ports:
-      - "${APP_PORT:-8080}:8080"
+      - "80:8080"       # HTTP — accessible via http://187.127.232.219
+      # - "443:8443"    # HTTPS — décommenter après config SSL (voir docker/ssl-setup.sh)
+
     env_file:
       - .env
+
     volumes:
-      # Uploads utilisateurs (images livres, bannières…) — persisté entre les redéploiements
-      - storage_uploads:/var/www/html/storage/app
-      # Base de données SQLite — persistée entre les redéploiements
+      # Uploads & fichiers publics — PERSISTÉS entre les redéploiements
+      - uploads:/var/www/html/storage/app
+      # Base de données SQLite — PERSISTÉE entre les redéploiements
       - db_data:/var/www/html/database
+
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/up"]
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 60s
+      start_period: 90s    # laisse le temps aux migrations de tourner
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"    # max 10 Mo par fichier log Docker
+        max-file: "3"      # garder 3 rotations = 30 Mo max
+
+    networks:
+      - buyourbook_net
+
+networks:
+  buyourbook_net:
+    driver: bridge
 
 volumes:
-  storage_uploads:
+  uploads:
     driver: local
   db_data:
     driver: local

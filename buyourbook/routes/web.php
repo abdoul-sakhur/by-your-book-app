@@ -187,6 +187,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('seller-books/{sellerBook}/reject', [SellerBookValidationController::class, 'reject'])->name('seller-books.reject');
     Route::post('seller-books/{sellerBook}/mark-collected', [SellerBookValidationController::class, 'markCollected'])->name('seller-books.mark-collected');
     Route::post('seller-books/{sellerBook}/buyback-propose', [SellerBookValidationController::class, 'buybackPropose'])->name('seller-books.buyback-propose');
+    Route::post('seller-books/{sellerBook}/buyback-accept-direct', [SellerBookValidationController::class, 'buybackAcceptDirect'])->name('seller-books.buyback-accept-direct');
     Route::post('seller-books/{sellerBook}/mark-paid', [SellerBookValidationController::class, 'markPaid'])->name('seller-books.mark-paid');
 
     // API interne — classes par école (pour select dynamique Alpine.js)
