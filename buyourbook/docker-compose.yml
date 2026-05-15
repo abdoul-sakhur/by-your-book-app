@@ -38,6 +38,8 @@ services:
       - .env
 
     volumes:
+      # Fichier .env monté pour que php artisan puisse y écrire (ex: key:generate)
+      - ./.env:/var/www/html/.env
       # Uploads & fichiers publics — PERSISTÉS entre les redéploiements
       - uploads:/var/www/html/storage/app
       # Base de données SQLite — PERSISTÉE entre les redéploiements
