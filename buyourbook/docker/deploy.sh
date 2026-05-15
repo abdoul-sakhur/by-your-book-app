@@ -6,6 +6,9 @@
 
 set -e
 
+# S'assurer d'être dans le bon répertoire
+cd /var/www/html
+
 echo "🚀 Début du post-déploiement BuyOurBook..."
 
 # 1. Migrations
