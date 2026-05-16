@@ -33,7 +33,7 @@
 
         <div class="mt-8 pt-6 border-t border-gray-200 text-center">
             <p class="text-sm text-gray-400">
-                &copy; {{ date('Y') }} BuyYourBook.com — Tous droits réservés. Fait avec <x-icon name="heart-filled" class="w-4 h-4 inline text-red-500" /> à Abidjan.
+                &copy; {{ date('Y') }} BuyYourBook — Tous droits réservés.
             </p>
         </div>
     </div>

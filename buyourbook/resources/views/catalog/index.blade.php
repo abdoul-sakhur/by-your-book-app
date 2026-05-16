@@ -242,20 +242,8 @@
                                     {{ $book->seller_books_count }}
                                 </span>
 
-                                {{-- Overlay hover avec bouton panier --}}
-                                @if($book->cheapest_seller_book_id)
-                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end p-3 z-10 rounded-xl">
-                                    <form action="{{ route('cart.add') }}" method="POST" class="w-full">
-                                        @csrf
-                                        <input type="hidden" name="seller_book_id" value="{{ $book->cheapest_seller_book_id }}">
-                                        <input type="hidden" name="quantity" value="1">
-                                        <button type="submit"
-                                                class="w-full inline-flex items-center justify-center gap-1.5 bg-white text-gray-900 font-semibold text-xs py-2 rounded-lg hover:bg-gray-100 transition-colors">
-                                            <x-icon name="backpack" class="w-3.5 h-3.5" /> Ajouter au panier
-                                        </button>
-                                    </form>
-                                </div>
-                                @endif
+                                {{-- Overlay hover — simple assombrissement pour indiquer le clic --}}
+                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 rounded-xl pointer-events-none"></div>
                             </a>
 
                             {{-- Infos sous la couverture --}}
